@@ -1,0 +1,141 @@
+class game
+	renderer
+	region
+
+
+
+
+region
+	struct chunkProtoGeometry
+
+
+renderer
+	renderer_global_state;
+
+	struct chunkBufferGeometry
+	
+	chunkBufferGeometry createChunkBufferGeometry(chunkProtoGeometry)
+
+
+
+	void enable (%BufferGeometry)
+
+	void draw   ()
+
+	void disable(%BufferGeometry)
+
+
+
+
+
+%ProtoGeometry 	contain gpu-ready geometry in primitive arrays on RAM
+%BufferGeometry contain IDs for buffers on Video RAM
+
+
+# RENDERER DOCUMENTATION
+
+## public variables
+
+## private variables
+
+`int state`
+...
+
+## public methods
+
+`int initRenderer()`
+...
+
+`%BufferGeometry createBufferGeometry( %ProtoGeometry )`
+Uploads geometry in ProtoGeometry to the GPU, and stores their ids in a new BufferGeometry.
+
+`void enable( typeof %BufferGeometry )`
+This prepares OpenGL to render provided type of geometry
+State must be null
+
+`void render( %BufferGeometry )`
+Renders whatever was enabled
+State must be set
+
+`void params( %BufferGeometry, ... )`
+Used to set parameters like matrices or other uniforms
+
+`void disable( typeof %BufferGeometry )`
+Reverts the state to null.
+State must be set to the provided buffer type.
+
+
+
+
+
+## private methods
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### ENTITY SYSTEM
+
+
+
+### TERRAIN 
+
+Decide on chunk count. Now, (Chunk *)malloc them. All of them will be used, always.
+
+	typedef struct {
+		unsigned short root;
+		short flags;
+		short loc[3];
+
+
+	} Chunk;
+
+where flags
+
+	typedef enum {
+		READY   	= 1 << 0	// True if mesh is render-ready
+		SKIP		= 1 << 1	// True if mesh is only air.
+		OUTDATED	= 1 << 2	// True if represented terrain has changed and needs meshing.
+		WORKED_ON 	= 1 << 3	// True if a mesher has been put to work§	
+	}
+
+
+
+Looping done so:
+
+loop all chunks
+	if mesh is ready
+		render
+	loop all mesher threads
+		if mesher is idle && mesher has geometry
+			upload mesh to gpu, set correct flags for corresponding chunk object
+	if mesh is outdated
+		loop all mesher threads
+			if thread is idle
+				forward operation to the mesher
+				break loop
+
+
+
+
+^ that up there is the idea
+
+what we do:
+
+loop all chunks
+	if mesh is ready
+		render
+	else
+		mesh it, NOW

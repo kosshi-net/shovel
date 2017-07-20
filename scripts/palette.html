@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<canvas></canvas>
+
+
+<script type="text/javascript">
+	
+'use strict';
+let canvas = document.querySelector('canvas');
+let ctx = canvas.getContext('2d');
+
+canvas.height = "640";
+canvas.width =  "640";
+
+function intToRGB(n){
+
+	let r, g, b;
+
+	r = ((n >> 4 & 0b11)/3.0 *256 )| 0;
+	g = ((n >> 2 & 0b11)/3.0 *256 )| 0;
+	b = ((n      & 0b11)/3.0 *256 )| 0;
+
+	return {r:r ,g:g ,b:b};
+
+}
+let i = 0;
+for (var x = 0; x < 8; x++) 
+for (var y = 0; y < 8; y++) {
+	let p = intToRGB(i);
+
+	console.log(x, y, p, i);
+	ctx.fillStyle = `rgb(${p.r},${p.g},${p.b})`;
+	console.log(`rgb(${p.r},${p.g},${p.b})`);
+
+	let s = 64;
+	ctx.fillRect(x*s, y*s, s, s);
+
+	ctx.fillStyle = "#000";
+
+
+
+	ctx.fillText(` ${i>>5&1}${i>>4&1}${i>>3&1}${i>>2&1}${i>>1&1}${i>>0&1} `, x*s+12, y*s+12);
+
+	i++;
+}
+
+
+</script>
+
+
+</body>
+</html>
