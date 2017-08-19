@@ -46,7 +46,7 @@ class CommentStripper {
 		this.state = state;
 	}
 
-	compile(source, delete_enters){
+	strip(source, delete_enters){
 
 		this.pushState(this.INITIAL);
 

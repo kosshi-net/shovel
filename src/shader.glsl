@@ -1,39 +1,66 @@
-<vertshader>
-#version 100
+<shader chunkVertSrc/>
 
-precision mediump float;
+	#version 100
 
-attribute vec3 aVertex;
-attribute vec3 aColor;
+	precision mediump float;
 
-varying vec3 vColor;
+	attribute vec3 aVertex;
+	attribute vec3 aColor;
 
-uniform mat4 uMP;
-uniform mat4 uMV;
+	varying vec3 vColor;
 
-void main() {
+	uniform mat4 uMP;
+	uniform mat4 uMV;
 
+	uniform vec3 uFogColor;
 
-	float dist = length(uMV*vec4(aVertex,1.0));
-	float vFogFactor = 1.0 -  pow( clamp( (dist)/(512.0), 0.0, 1.0), 1.5);
-
-	vColor = mix(vec3(0.6, 0.6, 0.8), aColor, vFogFactor);
-	
- 	gl_Position = uMP*uMV*vec4(aVertex, 1.0);
-};
-
-<vertshader>
-<fragshader>
-#version 100
-
-precision mediump float;
-
-varying vec3 vColor;
+	void main() {
 
 
-void main() {
+		float dist = length( uMV * vec4( aVertex, 1.0) );
+		float vFogFactor = 1.0 - pow( clamp( (dist) / 1024.0, 0.0, 1.0), 1.1);
 
-	gl_FragColor = vec4(vColor, 0.0);
-};
+		vColor = mix(uFogColor, aColor, vFogFactor);
+		
+	 	gl_Position = uMP*uMV*vec4(aVertex, 1.0);
+	};
 
-<fragshader>
+<shader chunkFragSrc/>
+
+	#version 100
+
+	precision mediump float;
+
+	varying vec3 vColor;
+
+
+
+	void main() {
+
+		gl_FragColor = vec4(vColor, 1.0);
+	};
+
+<shader textVertSrc/>
+
+	#version 120
+
+	attribute vec4 aCoord;
+	varying vec2 texcoord;
+
+	void main(void) {
+	  gl_Position = vec4(aCoord.xy, 0, 1);
+	  texcoord = aCoord.zw;
+	}
+
+<shader textFragSrc/>
+
+	#version 120
+
+	varying vec2 texcoord;
+	uniform sampler2D uTex;
+	uniform vec4 uColor;
+
+	void main(void) {
+		gl_FragColor = vec4(1, 1, 1, texture2D(uTex, texcoord).r)*uColor;
+		// gl_FragColor = vec4(1,1,1,1);
+	}

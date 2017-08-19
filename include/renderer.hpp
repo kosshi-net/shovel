@@ -2,10 +2,17 @@
 #define KOSSHI_RENDERER_INCLUDED 1
 
 #include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 #include <terrainmesher.hpp>
 
+#define GLEW_STATIC
+#include <GL/glew.h>
+#define GLFW_STATIC
+#include <GLFW\glfw3.h>
+
 namespace krdr {
-	int rendererInit(void);
+	int init(void);
+	GLFWwindow* getWindow(void);
 
 	double getTime(void);
 
@@ -21,35 +28,18 @@ namespace krdr {
 	void getWindowSize(int *width, int *height);
 	void setWindowTitle(char titlebuffer[]);
 
-	int getKey(int key);
-	int getMouseButton(int key);
 
-	void getCursorPos(double *x, double *y);
-	void getCursorMovement(double* x, double* y);
-	void resetCursorMovement(void);
+	void drawText(const char*, float, float, float, float, int);
 
-	int getScrollBuffer(void);
-	void clearScrollBuffer(void);
+	void setFogColor(float, float, float, float);
+
+
+	glm::vec3 screenToWorldSpaceVector(int x, int max_x, int y, int max_y, glm::mat4);
 
 
 
-	typedef struct {
-		int key;
-		int scancode;
-		int action;
-		int mods;
-	} KeyEvent;
+	void toggleWireframe();
 
-
-	int getKeyEventCount(void);
-
-	void resetKeyEventCount(void);
-
-	KeyEvent getKeyEvent(int index);
-
-
-	void lockCursor();
-	void unlockCursor();
 }
 
 #endif

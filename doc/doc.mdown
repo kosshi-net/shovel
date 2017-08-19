@@ -139,3 +139,120 @@ loop all chunks
 		render
 	else
 		mesh it, NOW
+
+
+
+
+
+
+
+
+GREEDY
+
+chunk root is 64
+
+we need 64 masks for each dimension, 64*3
+
+use culled mesher to fill those masks
+
+item in the mask contains all data of the quad
+
+0 is air
+
+32bits=4bytes
+
+[FLAG, COLOR, COLOR, COLOR, COLOR]
+color = 3x float 32
+
+{
+	{
+		2bit vert0_ao
+		2bit vert1_ao
+		2bit vert2_ao
+		2bit vert3_ao
+	},
+	{
+		1bit facing
+		1bit mirror
+		6bit color
+	}
+}
+
+AOAOAOAOFMRRGGBB
+
+1 item is 2 bytes.
+
+1 mask is 64*64
+											  262144
+	readMask( maskBuffer*, root, dimension, slice, item ){
+		items = root*root
+		slices = root
+		return maskBuffer[ (items*slices) * dimension + (items * slice) + item ]
+	}
+	writeMask( maskBuffer*, root, dimension, slice, item, char){
+		items = root*root
+		slices = root
+		maskBuffer[ (items*slices) * dimension + (items * slice) + item ] = data;
+	}
+
+	maskIndex( root, dimension, slice){
+		items = root*root
+		slices = root
+		return (items*slices) * dimension + (items * slice)
+	}
+
+		
+MASK[ DIMENSION ][ SLICE ][ ITEM ]
+		  3			64	    64^2
+
+
+function encodeMaskItem(facing, inverse, color6bit, ao){
+	let value = 0;
+
+	value = color6bit & 0b00111111;
+	value = value | (inverse << 6);
+	value = value | (facing  << 7);
+
+	for (let i = 0; i < 4; ++i) {
+		value = value | ( ao[i] << 8 + i*2 );
+	}
+	return value;
+}
+
+function decodeMaskItem(value){
+	let color6bit = value & 0b00111111;
+	let inverse = value >> 6 & 0b1;
+	let facing  = value >> 7 & 0b1;
+	let ao = [];
+	for (let i = 0; i < 4; ++i) {
+		ao[i] = (value >> 8 + (i*2)) & 0b11;
+	}
+	console.log(
+		facing,
+		inverse,
+		color6bit.toString(2),
+		ao
+	);
+}
+
+
+STORING STUFF IN MASKS
+
+there are 64 slices per dim
+
+current_location[dim] is the slice!!!
+
+
+slice u v
+ [x] [y] [z]
+ [y] [x] [z]
+ [z] [x] [y]
+
+
+
+	int maskIndex( int root, int dimension, int slice){
+		int items = root*root;
+		int slices = root;
+		
+		return (items*slices) * dimension + (items * slice);
+	}

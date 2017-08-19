@@ -15,7 +15,17 @@ namespace Terrain {
 	Terrain*getTerrain();
 
 
-	int read(int l[3]);
+	char read(int l[3]);
+	void write(int l[3], char);
+	char saferead(int l[3]);
+	bool inbounds(int*);
+	bool raycast(
+		float vector[], float origin[],
+		float*distance, int * hitloc, int * normal, char * block
+	);
+
+
+
 	void generateTerrain();
 	void generateSimplex();
 }

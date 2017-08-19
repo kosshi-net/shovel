@@ -9,6 +9,8 @@ namespace TerrainMesher {
 		float* vertexBuffer;
 		unsigned int* indexBuffer;
 		float* colorBuffer;
+		
+		short* 			maskBuffer;
 
 		int vertexCount;
 		int indexCount;
@@ -35,6 +37,7 @@ namespace TerrainMesher {
 	MeshBuffer* getMesh();
 	void meshUsed();
 
+	void markDirty(int*);
 }
 
 #endif
