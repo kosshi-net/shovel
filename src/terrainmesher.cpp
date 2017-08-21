@@ -12,6 +12,10 @@
 
 #include <luts.hpp>
 
+
+#define MESH_BUFFER_COUNT 4
+#define MESH_BUFFER_SIZE (64*64*64)/2*6*4;
+
 namespace TerrainMesher {
 
 	typedef struct {
@@ -23,9 +27,9 @@ namespace TerrainMesher {
 		int vertexCount;
 		int indexCount;
 		int chunk;
+
+		int locked; // locked write, means that the buffer has not been uploaded yet
 	} MeshBuffer;
-
-
 
 	typedef struct {
 		int count;
@@ -49,7 +53,9 @@ namespace TerrainMesher {
 	};
 
 	pthread_t thread;
-	MeshBuffer mesh;
+
+	MeshBuffer mesh[MESH_BUFFER_COUNT];
+
 	ThreadState threadState = START;
 
 	ChunkList * getChunks(){
@@ -107,15 +113,15 @@ namespace TerrainMesher {
 		}
 	}
 
-		// #pragma omp parallel for
 	void mesher(Terrain::Terrain * terrain, int offset[3], int chunkroot, MeshBuffer*mesh){
 		
+		bool hasBlocks = false;
 		#pragma omp parallel for
 		for (int i0 = 0; i0 < chunkroot; ++i0)
 		for (int i1 = 0; i1 < chunkroot; ++i1)
 		for (int i2 = 0; i2 < chunkroot; ++i2)
 		{	
-			int AC[3] = {i2, i1, i0};
+			int AC[3] = {i1, i2, i0};
 
 		 	// AC = chunk location, AW = world location
 			int AW[3]; 
@@ -136,6 +142,8 @@ namespace TerrainMesher {
 				int b = Terrain::saferead(BW);
 
 				if ((a==0)==(b==0)) continue; // culling
+
+				if(!hasBlocks) hasBlocks = true;
 
 				int facing, color6bit;
 
@@ -177,8 +185,10 @@ namespace TerrainMesher {
 		int vertexCount = 0;
 
 		// GREEDY ALGO
-		for (int dim = 0; dim < 3; ++dim) // dim
-		for (int slice = 0; slice < chunkroot; ++slice){
+		if(hasBlocks)
+		for (int slice = 0; slice < chunkroot; ++slice)
+		for (int dim = 0; dim < 3; ++dim)
+		{
 			int __itemIndex = 0;
 			for (int u = 0; u < chunkroot; ++u)
 			for (int v = 0; v < chunkroot; ++v){
@@ -275,88 +285,98 @@ namespace TerrainMesher {
 				for (int i = 0; i < 6; ++i) mesh->indexBuffer[indexIndex++] = indices[inverse][i] + vertexCount;
 				vertexCount+=4;
 			}
-
-			mesh->vertexCount = vertexIndex;
-			mesh->indexCount = indexIndex;
 		}
+		mesh->vertexCount = vertexIndex;
+		mesh->indexCount = indexIndex;
+
 	}
 
+	MeshBuffer * getMesh(int locked){
+		for (int i = 0; i < MESH_BUFFER_COUNT; ++i) 
+			if(mesh[i].locked == locked) {
+				return &mesh[i];
+			}
+		// if(locked) printf("EMPTY\n"); else printf("FULL\n");
+		return NULL;
+	}
 
+	void lockMesh(MeshBuffer*m){
+		m->locked = 1;
+	}
+
+	void unlockMesh(MeshBuffer*m){
+		m->locked = 0;
+	}
 
 	static void* threadMain(void*arg){
 		using namespace TerrainMesher;
 		int i = 0;
 
-		int bsize = 8*1024*1024;
-		mesh.vertexBuffer = (float*)		malloc(bsize*sizeof(float));
-		mesh.colorBuffer  = (float*)		malloc(bsize*sizeof(float));
-		mesh.indexBuffer  = (unsigned int*)	malloc(bsize*sizeof(int));
+		int bsize = MESH_BUFFER_SIZE;
 
-		int maskBufferSize = 3 * chunks.root * (chunks.root*chunks.root) * sizeof(short);
+		xsleep(200);
 
+		printf("Attemting to allocate %i B...\n", ((bsize*sizeof(float))*3 + (chunks.root * (chunks.root*chunks.root) * sizeof(short))) );
 
-		mesh.maskBuffer   = (short*)		calloc( maskBufferSize, 1 );
-
-		printf("[TerraMesher-T1] vertexGeometryBuffer: %iKB\n", bsize*sizeof(float)/1024);
-		printf("[TerraMesher-T1] ColorGeometryBuffer: %iKB\n", bsize*sizeof(float)/1024);
-		printf("[TerraMesher-T1] IndexGeometryBuffer: %iKB\n", bsize*sizeof(int)/1024);
-		printf("[TerraMesher-T1] MaskBuffers: %iKB\n", maskBufferSize/1024);
+		for (int j = 0; j < MESH_BUFFER_COUNT; ++j) {
+			mesh[j].vertexBuffer = (float*)		malloc(bsize*sizeof(float));
+			mesh[j].colorBuffer  = (float*)		malloc(bsize*sizeof(float));
+			mesh[j].indexBuffer  = (unsigned int*)	malloc(bsize*sizeof(int)*1.5);
 
 
+			int maskBufferSize = 3 * chunks.root * (chunks.root*chunks.root) * sizeof(short);
+
+			mesh[j].maskBuffer   = (short*)		calloc( maskBufferSize, 1 );
+
+			assert( mesh[j].vertexBuffer != NULL );
+			assert( mesh[j].colorBuffer != NULL );
+			assert( mesh[j].indexBuffer != NULL );
+			assert( mesh[j].maskBuffer != NULL );
+
+			mesh[j].locked = 0;
+
+			printf("[TerraMesher %i] vertexGeometryBuffer: %iKB\n", j, bsize*sizeof(float)/1024);
+			printf("[TerraMesher %i] ColorGeometryBuffer: %iKB\n", 	j, bsize*sizeof(float)/1024);
+			printf("[TerraMesher %i] IndexGeometryBuffer: %iKB\n", 	j, bsize*sizeof(int)/1024);
+			printf("[TerraMesher %i] MaskBuffers: %iKB\n", 			j, maskBufferSize/1024);
+		}
 
 		while(threadState != COMMAND_KILL) {
 
-			if( i == chunks.count) {
-				i = 0;
-			}
+			MeshBuffer*m = getMesh( 0 );
 
-			if (threadState == SLEEP) {
-				xsleep(0);
+			if(m == NULL) {
+				printf("SLEEP\n");
+				xsleep(5);
 				continue;
 			}
 
-			threadState = WORK;
+			// for (int j = 0; j < 256; ++j) {
+				if( i == chunks.count) i = 0;
 
-			int l[] = {
-				chunks.x[i]*chunks.root,
-				chunks.y[i]*chunks.root,
-				chunks.z[i]*chunks.root
-			};
+				if(chunks.state[i] & 0b1) {
+					m->chunk = i;
+					int l[] = {
+						chunks.x[i]*chunks.root,
+						chunks.y[i]*chunks.root,
+						chunks.z[i]*chunks.root
+					};
+					chunks.state[i] = chunks.state[i] ^ 0b1;
+					clock_t start = clock();
+					mesher( Terrain::getTerrain(), l, chunks.root, m);
+					lockMesh(m);
+					clock_t end = clock();
+					float seconds = (float)(end - start) / CLOCKS_PER_SEC * 1000;
+					// printf("%i ms, %i\n", (int)seconds, m->indexCount);
+				}
+				i++;
 
-			mesh.chunk = i;
-
-			if(chunks.state[i] & 0b1) {
-				chunks.state[i] = chunks.state[i] ^ 0b1;
-				clock_t start = clock();
-				mesher( Terrain::getTerrain(), l, chunks.root, &mesh);
-				clock_t end = clock();
-				float seconds = (float)(end - start) / CLOCKS_PER_SEC * 1000;
-				printf("%i ms, %i\n", (int)seconds, mesh.indexCount);
-				// if(mesh.indexCount == 0){
-				// 	chunks.state[i] = 1;
-				// } else {
-				// 	threadState = SLEEP;
-				// }
-				threadState = SLEEP;
-			}
-			i++;
+				// if(j == 255) xsleep(200);
+			// }
 		}
 		return NULL;
 	}
 
-	MeshBuffer * getMesh(){
-		if(threadState == SLEEP){
-			return &mesh;
-		}
-		return NULL;
-	}
-
-	void meshUsed(){
-		if(threadState == SLEEP)
-			threadState = COMMAND_WAKE;
-		else
-			printf("ERROR");
-	}
 
 
 	void init(int terrainroot[3], int chunkroot){
@@ -379,9 +399,6 @@ namespace TerrainMesher {
 		// 1 << 1 Dirty
 		// 1 << 0 BufferCreated
 
-
-
-
 		printf("[TerraMesher] Filling...\n");
 		int i = 0;
 		for (int x = 0; x < terrainroot[0]/chunkroot; ++x)
@@ -398,8 +415,6 @@ namespace TerrainMesher {
 			i++;
 		}
 
-
-		
 		pthread_create( &thread, NULL, &threadMain, NULL);
 		printf("[TerrainMesher] Mesher thread started!\n");
 	}
@@ -423,7 +438,6 @@ namespace TerrainMesher {
 	}
 
 	void markDirty(int l[]){
-
 		int m[3] = {0};
 		for (m[0] = l[0]-1; m[0] < l[0]+2; ++m[0])
 		for (m[1] = l[1]-1; m[1] < l[1]+2; ++m[1])

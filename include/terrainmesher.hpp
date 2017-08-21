@@ -15,6 +15,7 @@ namespace TerrainMesher {
 		int vertexCount;
 		int indexCount;
 		int chunk;
+		int locked;
 	} MeshBuffer;
 
 
@@ -34,8 +35,8 @@ namespace TerrainMesher {
 	ChunkList * getChunks();
 
 	void init(int[], int);
-	MeshBuffer* getMesh();
-	void meshUsed();
+	MeshBuffer* getMesh(int);
+	void unlockMesh(MeshBuffer*);
 
 	void markDirty(int*);
 }

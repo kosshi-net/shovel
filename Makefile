@@ -4,7 +4,8 @@ SRC= src/
 BIN= bin/
 BUILD= build/
 CC= g++
-CFLAGS= -O3 -ftree-vectorize -msse2 -static -fopenmp -Wall -static-libgcc -static-libstdc++ -std=c++11 
+CFLAGS= -O3 -ftree-vectorize -msse2 -static -fopenmp -Wall -static-libgcc -static-libstdc++ -std=c++11
+# CFLAGS= -g -fopenmp -Wall -std=c++11
 #-Wl,-subsystem,windows
 # -Wl,-subsystem,windows -fopt-info-vec-missed 
 # CFLAGS=-fopenmp -static  -Wall -static-libgcc -static-libstdc++

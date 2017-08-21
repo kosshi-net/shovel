@@ -55,35 +55,26 @@ namespace Terrain {
 
 
 	void generateTerrain(){
+		#pragma omp parallel for
 		for (int x = 0; x < terrain.root[0]; ++x)
 		for (int z = 0; z < terrain.root[2]; ++z)
 		{	
 			float a = (glm::simplex(glm::vec3((x+9001) * 0.0050, 0.0f,   (z+9001) * 0.0050)) + 1.0 ) / 2.0;
 			float b = (glm::simplex(glm::vec3((x+9001) * 0.1000, 0.0f,   (z+9001) * 0.1000)) + 1.0 ) / 2.0;
 			float c = (glm::simplex(glm::vec3((x+9001) * 0.0010, 0.0f,   (z+9001) * 0.0010)) + 1.0 ) / 2.0;
-
 			int h = 
-				pow( a*c, 2.0 )*500+15
+				pow( a*c, 2.0 )*300+15
 				+ pow(b*a, 2.0)*50;
 			int w = 20;
 			int m = 70;
-
-			// #pragma omp paraller for
 			for (int y = 0; y < terrain.root[1]; ++y)
 			{	
 				int vec2[] = {x, y, z};
-
-				char rgb = 0;;
-
+				char rgb = 0;
 				if(h>y){
 					if   	(h < w+3) rgb = 0b111110;
 					else if (h >  m) rgb =  0b010101;
 					else			 rgb =  0b000100;
-					// char r = (glm::simplex(glm::vec3(x * 0.2, y * 0.2 ,z *0.2))+1.0f)/2.0f * 3.0f;
-					// char g = (glm::simplex(glm::vec3(x * 0.1, y * 0.1 ,z *0.1))+1.0f)/2.0f * 3.0f; 
-					// char b = (glm::simplex(glm::vec3(x * 0.3, y * 0.3 ,z *0.3))+1.0f)/2.0f * 3.0f;
-					// rgb = b | r << 4 | g << 2;
-					
 				}
 				else if(y<w) rgb = 0b011011;
 

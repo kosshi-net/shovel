@@ -222,8 +222,7 @@ namespace krdr {
 
 	void toggleWireframe(){
 		wireFrame = !wireFrame;
-			glPolygonMode( GL_FRONT_AND_BACK, wireFrame ? GL_LINE : GL_FILL );
-
+		glPolygonMode( GL_FRONT_AND_BACK, wireFrame ? GL_LINE : GL_FILL );
 	}
 
 	glm::vec3 screenToWorldSpaceVector(int x, int max_x, int y, int max_y, glm::mat4 pRotMat){
@@ -232,16 +231,16 @@ namespace krdr {
 			-(y/(float)max_y) * 2.0f + 1.0f,
 			-1.0f, 1.0f
 		};
-
 		glm::vec4 ray = glm::inverse(pRotMat) * ray_clip;
-
 		return glm::normalize(ray);
 	}
 
 	void meshTick(){
-		while(1){
-			TerrainMesher::MeshBuffer* mesh = TerrainMesher::getMesh();
+		for (int j = 0; j < 16; ++j){
+			TerrainMesher::MeshBuffer* mesh = TerrainMesher::getMesh(1);
 			if(mesh == NULL) break;
+
+			// printf("[MeshTick] Mesh done, uploading!\n");
 
 			int i = mesh->chunk;
 			TerrainMesher::ChunkList* chunks = TerrainMesher::getChunks();
@@ -269,11 +268,10 @@ namespace krdr {
 
 			chunks->items[i] = mesh->indexCount;
 
-
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,	0);
 			glBindBuffer(GL_ARRAY_BUFFER, 			0);
 
-			TerrainMesher::meshUsed();
+			TerrainMesher::unlockMesh(mesh);
 		}
 	}
 
