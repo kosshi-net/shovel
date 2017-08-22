@@ -300,12 +300,23 @@ namespace TerrainMesher {
 		return NULL;
 	}
 
+
 	void lockMesh(MeshBuffer*m){
 		m->locked = 1;
 	}
 
 	void unlockMesh(MeshBuffer*m){
 		m->locked = 0;
+	}
+
+	float activity = 0;
+	int meshedLastS = 0;
+
+	float getActivity(){
+		return activity;
+	}
+	int getCount(){
+		return meshedLastS;
 	}
 
 	static void* threadMain(void*arg){
@@ -341,20 +352,38 @@ namespace TerrainMesher {
 			printf("[TerraMesher %i] MaskBuffers: %iKB\n", 			j, maskBufferSize/1024);
 		}
 
+
+		clock_t lastClock = clock();
+		clock_t activeTime = 0;
+
+		int count = 0;
+
 		while(threadState != COMMAND_KILL) {
 
 			MeshBuffer*m = getMesh( 0 );
 
 			if(m == NULL) {
 				printf("SLEEP\n");
-				xsleep(5);
+				xsleep(10);
 				continue;
+			}
+
+			if(lastClock + CLOCKS_PER_SEC < clock()){
+				lastClock += CLOCKS_PER_SEC;
+				activity = activeTime / (float)CLOCKS_PER_SEC;
+
+				activeTime=0;
+
+				meshedLastS = count;
+				count = 0;
+
 			}
 
 			// for (int j = 0; j < 256; ++j) {
 				if( i == chunks.count) i = 0;
 
 				if(chunks.state[i] & 0b1) {
+					clock_t start = clock();
 					m->chunk = i;
 					int l[] = {
 						chunks.x[i]*chunks.root,
@@ -362,12 +391,13 @@ namespace TerrainMesher {
 						chunks.z[i]*chunks.root
 					};
 					chunks.state[i] = chunks.state[i] ^ 0b1;
-					clock_t start = clock();
 					mesher( Terrain::getTerrain(), l, chunks.root, m);
+					count++;
 					lockMesh(m);
 					clock_t end = clock();
-					float seconds = (float)(end - start) / CLOCKS_PER_SEC * 1000;
+					// int seconds = (float)(end - start) / CLOCKS_PER_SEC * 1000;
 					// printf("%i ms, %i\n", (int)seconds, m->indexCount);
+					activeTime += (end-start);
 				}
 				i++;
 
@@ -377,6 +407,8 @@ namespace TerrainMesher {
 		return NULL;
 	}
 
+
+	int activityTimeMS = 0;
 
 
 	void init(int terrainroot[3], int chunkroot){

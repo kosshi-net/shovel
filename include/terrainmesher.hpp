@@ -38,6 +38,9 @@ namespace TerrainMesher {
 	MeshBuffer* getMesh(int);
 	void unlockMesh(MeshBuffer*);
 
+	float getActivity();
+	int getCount();
+
 	void markDirty(int*);
 }
 

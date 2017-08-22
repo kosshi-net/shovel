@@ -123,7 +123,7 @@ int main(void) {
 			sy = 2.0 / height;
 
 
-			glm::vec3 vec = krdr::screenToWorldSpaceVector(cx, width, cy, height, projectionRotation);
+			// glm::vec3 vec = krdr::screenToWorldSpaceVector(cx, width, cy, height, projectionRotation);
 
 			int line = 1;
 
@@ -131,28 +131,32 @@ int main(void) {
 
 			snprintf(titlebuffer, sizeof(titlebuffer), "%ifps", (int)(1.0/delta));
 			krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-
 			snprintf(titlebuffer, sizeof(titlebuffer), "[%i, %i, %i]", (int)camera.loc[0], (int)camera.loc[1], (int)camera.loc[2]);
 			krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-
 			krdr::drawText( build, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 			krdr::drawText( "Do not distribute", -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
-			snprintf(titlebuffer, sizeof(titlebuffer), "[%f, %f, %f]", vec[0], vec[1], vec[2]);
+			snprintf(titlebuffer, sizeof(titlebuffer), "Mshr: %i%%, %i", (int)(TerrainMesher::getActivity()*100), TerrainMesher::getCount());
 			krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
-			int hitloc[3]={0};
-			int normal[3]={0};
-			char block = 0;
-			float dist = 2000.0;
+			
 
-			Terrain::raycast(
-				&vec[0], &camera.loc[0],
-				&dist, hitloc, normal, &block
-			);
 
-			snprintf(titlebuffer, sizeof(titlebuffer), "hit: %f", dist);
-			krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			// snprintf(titlebuffer, sizeof(titlebuffer), "[%f, %f, %f]", vec[0], vec[1], vec[2]);
+			// krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+
+
+
+			// int hitloc[3]={0};
+			// int normal[3]={0};
+			// char block = 0;
+			// float dist = 2000.0;
+			// Terrain::raycast(
+				// &vec[0], &camera.loc[0],
+				// &dist, hitloc, normal, &block
+			// );
+			// snprintf(titlebuffer, sizeof(titlebuffer), "hit: %f", dist);
+			// krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
 
 		}

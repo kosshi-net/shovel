@@ -26,6 +26,7 @@
 
 #define PI 3.14159265
 
+#include <textrenderer.hpp>
 
 // kosshis renderer
 namespace krdr {
@@ -89,20 +90,8 @@ namespace krdr {
 	GLuint shader_aColor;
 
 
-	GLuint textShader;
-	GLuint textShader_aCoord;
-
-	GLuint textShader_uTex;
-
-	GLuint textShader_uColor;
-
-	GLuint text_vbo;
-	GLuint text_tex;
 
 
-	FT_Library ft;
-	FT_Face face;
-	FT_GlyphSlot g;
 
 	static void error_callback(int error, const char* description){
 	    MessageBox(0, description, "Error!", 0);
@@ -145,26 +134,7 @@ namespace krdr {
 		}
 
 
-		if(FT_Init_FreeType(&ft)) {
-			fprintf(stderr, "Could not init freetype library\n");
-			MessageBox(0, "FreeType failed to initialize.", "Error!", 0);
-			return -1;
-		}
-
-		if(FT_New_Face(ft, "Consolas.ttf", 0, &face)) {
-			fprintf(stderr, "Could not open font\n");
-			MessageBox(0, "Could not open font!", "Error!", 0);
-			return -1;
-		}
-
-		FT_Set_Pixel_Sizes(face, 0, 48);
-		
-		if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
-			fprintf(stderr, "Could not load character 'X'\n");
-			MessageBox(0, "FreeType is not working!", "Error!", 0);
-			return -1;
-		}
-		g = face->glyph;
+		if(!initTextRenderer()) return -1;
 
 
 		const GLubyte* renderer = glGetString(GL_RENDERER); 
@@ -188,32 +158,6 @@ namespace krdr {
 		shader_uMV =     		glGetUniformLocation(shader, "uMV");
 		shader_uFogColor =      glGetUniformLocation(shader, "uFogColor");
 
-		textShader = createShader( textVertSrc, textFragSrc );
-		glUseProgram(textShader);
-		textShader_aCoord =  glGetAttribLocation (textShader, "aCoord");
-		textShader_uTex = glGetUniformLocation(textShader, "uTex");
-		textShader_uColor =  glGetUniformLocation(textShader, "uColor");
-
-		GLuint text_tex;
-		glActiveTexture(GL_TEXTURE0);
-		glGenTextures(1, &text_tex);
-		glBindTexture(GL_TEXTURE_2D, text_tex);
-		glUniform1i(textShader_uTex, 0);
-		
-		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		glGenBuffers(1, &text_vbo);
-		glEnableVertexAttribArray(textShader_aCoord);
-		glBindBuffer(GL_ARRAY_BUFFER, text_vbo);
-		glVertexAttribPointer(textShader_aCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glDisableVertexAttribArray(textShader_aCoord);
 
 		return 0;
 	}
@@ -319,68 +263,6 @@ namespace krdr {
 		glDisable(GL_CULL_FACE); 
 	}
 
-	void drawText(const char *text, float x, float y, float sx, float sy, int fontSize) {
-		glUseProgram(textShader);
-		glBindBuffer(GL_ARRAY_BUFFER, text_vbo);
-		glEnableVertexAttribArray(textShader_aCoord);
-
-		FT_Set_Pixel_Sizes(face, 0, fontSize);
-		GLfloat black[4] = {0, 0, 0, 1};
-		glUniform4fv(textShader_uColor, 1, black);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, text_tex);
-		glUniform1i(textShader_uTex, 0);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-		const char *p;
-
-		for(p = text; *p; p++) {
-			if(FT_Load_Char(face, *p, FT_LOAD_RENDER))
-					continue;
-	 	
-			glTexImage2D(
-				GL_TEXTURE_2D, 0, GL_RED, g->bitmap.width, g->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer
-			);
-	 
-			float x2 = x + g->bitmap_left * sx;
-			float y2 = -y - g->bitmap_top * sy;
-			float w = g->bitmap.width * sx;
-			float h = g->bitmap.rows * sy;
-	 
-			GLfloat box[4][4] = {
-					{x2,     -y2    , 0, 0},
-					{x2 + w, -y2    , 1, 0},
-					{x2,     -y2 - h, 0, 1},
-					{x2 + w, -y2 - h, 1, 1},
-			};
-
-			glVertexAttribPointer(textShader_aCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
-			glBufferData(GL_ARRAY_BUFFER, sizeof box, box, GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	 
-			x += (g->advance.x/64) * sx;
-			y += (g->advance.y/64) * sy;
-		}
-
-		glDisableVertexAttribArray(textShader_aCoord);
-
-		GLenum err;
-		while((err = glGetError()) != GL_NO_ERROR)
-		{
-			printf("OPENGL ERROR %i\n", err);
-		}
-	}
 
 	void setFogColor(float r, float g, float b, float a){
 
