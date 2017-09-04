@@ -42,6 +42,9 @@ $(BUILD)terrainmesher.o: $(SRC)mesher/terrainmesher.cpp
 $(BUILD)log.o: $(SRC)log/log.cpp
 	$(CC) -c $(SRC)log/log.cpp $(INC) $(CFLAGS) -o $(BUILD)log.o
 
+$(BUILD)entitysys.o: $(SRC)entitysys/entitysys.cpp
+	$(CC) -c $(SRC)entitysys/entitysys.cpp $(INC) $(CFLAGS) -o $(BUILD)entitysys.o
+
 $(BUILD)res.h: $(SRC)renderer/shader.glsl
 	node scripts/res.js
 
@@ -55,3 +58,6 @@ test: $(BIN)game
 phystest:
 	$(CC) $(SRC)tests/aabbtest.cpp $(INC) $(CFLAGS) -o $(BUILD)phystest.exe
 	./build/phystest
+test_entitysys:
+	$(CC) $(SRC)tests/test_entitysys.cpp $(INC) $(CFLAGS) -o $(BUILD)test_entitysys.exe
+	./build/test_entitysys
