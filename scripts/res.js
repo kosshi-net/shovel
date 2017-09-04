@@ -3,7 +3,7 @@ console.log('Generating resource file...');
 const fs = require('fs');
 const cs = new (require('./commentstripper.js'))();
 
-var shaderfile = fs.readFileSync('src/shader.glsl', 'utf8');
+var shaderfile = fs.readFileSync('src/renderer/shader.glsl', 'utf8');
 
 // var imagefile = new Uint8Array(fs.readFileSync('../res/gee.png'));
 
@@ -24,6 +24,18 @@ for (var i = 1; i < arr.length; i++) {
 }
 
 
+let file = fs.readFileSync('scripts/font.ttf');
+
+file = new Uint8Array(file);
+
+
+	out += `\nconst unsigned char Consolas[] = {\n`;
+
+for (var i = 0; i < file.length; i++) {
+	out += `${file[i]}, `;
+}
+
+out += `};`;
 
 // const char[] chunk_vert_shader = "${vert}";
 // const char[] chunk_frag_shader = "${frag}";

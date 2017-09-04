@@ -9,7 +9,7 @@
 #include <glm/gtc/noise.hpp>
 #include <glm/vec3.hpp>
 
-#include <rdtsc.hpp>
+#include <log/log.hpp>
 
 
 #define FEAT_SIZE 0.01
@@ -161,7 +161,12 @@ namespace Terrain {
 	void init(int root[3]){
 		for (int i = 0; i < 3; ++i) terrain.root[i] = root[i];
 		int size = terrain.root[0]*terrain.root[1]*terrain.root[2];
-		printf("[Terrain] Allocating %i*%i*%i blocks (%i KB);\n", terrain.root[0], terrain.root[1], terrain.root[2], size/1024);
+
+		char txtbfr[128];
+
+		snprintf(txtbfr, sizeof(txtbfr), "[Terrain] Allocating %i*%i*%i blocks (%i MB);\n", terrain.root[0], terrain.root[1], terrain.root[2], size/1024/1024);
+
+		Logger::log(txtbfr);
 
 		terrain.vxl = (char*)malloc(terrain.root[0]*terrain.root[1]*terrain.root[2]*sizeof(char));
 

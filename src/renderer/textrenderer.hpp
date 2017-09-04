@@ -71,12 +71,17 @@ namespace krdr {
 			return -1;
 		}
 
-		if(FT_New_Face(ft, "Consolas.ttf", 0, &face)) {
+		// if(FT_New_Face(ft, &Consolas, 0, &face)) {
+			// fprintf(stderr, "Could not open font\n");
+			// MessageBox(0, "Could not open font!", "Error!", 0);
+			// return -1;
+		// }
+
+		if(FT_New_Memory_Face(ft, Consolas, sizeof(Consolas), 0, &face)) {
 			fprintf(stderr, "Could not open font\n");
 			MessageBox(0, "Could not open font!", "Error!", 0);
 			return -1;
 		}
-
 		FT_Set_Pixel_Sizes(face, 0, 20 );
 		
 		if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
@@ -136,7 +141,7 @@ namespace krdr {
 
 		}
 
-		writePPM(atlasWidth, atlasHeight, atlas);
+		// writePPM(atlasWidth, atlasHeight, atlas);
 		// for (int i = 0; i < atlasWidth*atlasHeight; ++i)
 		// {
 		// 	printf( "%i", atlas[i]);
@@ -188,18 +193,11 @@ namespace krdr {
 		glBindBuffer(GL_ARRAY_BUFFER, text_vbo);
 		glEnableVertexAttribArray(textShader_aCoord);
 
-		// FT_Set_Pixel_Sizes(face, 0, fontSize);
 		GLfloat black[4] = {0, 0, 0, 1};
 		glUniform4fv(textShader_uColor, 1, black);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, text_tex);
-		// glUniform1i(textShader_uTex, 0);
-
-		// glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 		const char *p;
 
@@ -207,15 +205,7 @@ namespace krdr {
 		int count = 0;
 
 		for(p = text; *p; p++) {
-
-
 			int id = *p;
-	 	
-			// glTexImage2D(
-			// 	GL_TEXTURE_2D, 0, GL_RED, g->bitmap.width, g->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer
-			// );
-	 
-
 			float x2 = x + AChar[id].left * sx;
 			float y2 = -y - AChar[id].top * sy;
 			float w = AChar[id].width * sx;
@@ -228,7 +218,6 @@ namespace krdr {
 	 			(AChar[id].y + AChar[id].height) / (float)atlasHeight,
 
 			};
-
 
 			GLfloat box[4*6] = {
 					x2,     -y2    , uv[0], uv[1],
@@ -248,7 +237,6 @@ namespace krdr {
 	 		
 
 			x += (AChar[id].advance) * sx;
-			// y += (g->advance.y/64) * sy;
 		}
 
 		glVertexAttribPointer(textShader_aCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);

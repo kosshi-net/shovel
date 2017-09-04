@@ -5,14 +5,25 @@
 #define GLFW_STATIC
 #include <GLFW\glfw3.h>
 
-#include <renderer.hpp>
-#include <input.hpp>
+#include <renderer/renderer.hpp>
 
 #define MouseEventStackSize 128
 #define KeyEventStackSize 128
 
 namespace input {
 
+	typedef struct {
+		int button;
+		int action;
+		int mods;
+	} MouseEvent;
+
+	typedef struct {
+		int key;
+		int scancode;
+		int action;
+		int mods;
+	} KeyEvent;
 	GLFWwindow * window;
 
 	MouseEvent getMouseEvent(int index);

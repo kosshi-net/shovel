@@ -3,7 +3,7 @@
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
-#include <terrainmesher.hpp>
+#include <mesher/terrainmesher.hpp>
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -28,15 +28,17 @@ namespace krdr {
 	void getWindowSize(int *width, int *height);
 	void setWindowTitle(char titlebuffer[]);
 
-
+	// void drawText(const signed char*, float, float, float, float, int);
+	// void drawText(const unsigned char*, float, float, float, float, int);
 	void drawText(const char*, float, float, float, float, int);
 
 	void setFogColor(float, float, float, float);
 
-
 	glm::vec3 screenToWorldSpaceVector(int x, int max_x, int y, int max_y, glm::mat4);
 
 
+	const unsigned char* getRenderer();
+	const unsigned char* getVersion() ;
 
 	void toggleWireframe();
 

@@ -1,7 +1,7 @@
 #ifndef KOSSHI_TERRAINMESHER_INCLUDED
 #define KOSSHI_TERRAINMESHER_INCLUDED 1
 
-#include <terrain.hpp>
+#include <terrain/terrain.hpp>
 
 namespace TerrainMesher {
 

@@ -4,7 +4,7 @@ SRC= src/
 BIN= bin/
 BUILD= build/
 CC= g++
-CFLAGS= -O3 -ftree-vectorize -msse2 -static -fopenmp -Wall -static-libgcc -static-libstdc++ -std=c++11
+CFLAGS= -O3 -ftree-vectorize -msse2 -static -fopenmp -Wall -static-libgcc -static-libstdc++ -std=c++11 -m32
 # CFLAGS= -g -fopenmp -Wall -std=c++11
 #-Wl,-subsystem,windows
 # -Wl,-subsystem,windows -fopt-info-vec-missed 
@@ -17,29 +17,32 @@ SIMPLEX = $(EXT)simplex-1.0/
 GLM = $(EXT)glm-0.9.8.4/
 FT = $(EXT)freetype-2.8/
 
-INC = -I $(GLFW)include -I $(GLEW)include -I $(SIMPLEX)include -I $(GLM)include -I $(FT)include -I
-LIB =   $(GLEW)lib/glew.o -L $(GLFW)lib $(SIMPLEX)lib/simplex.o $(FT)lib/libfreetype.a 
+INC = -I $(GLFW)include -I $(GLEW)include -I $(SIMPLEX)include -I $(GLM)include -I $(FT)include -I include -I src
+LIB =   $(GLEW)lib/glew.o -L $(GLFW)lib $(SIMPLEX)lib/simplex.o $(FT)lib/libfreetype.a
 HEAD = include/
 
-$(BIN)game: $(BUILD)game.o $(BUILD)renderer.o $(BUILD)input.o $(BUILD)terrain.o $(BUILD)terrainmesher.o;
-	$(CC) $(BUILD)game.o $(BUILD)renderer.o $(BUILD)input.o $(BUILD)terrain.o $(BUILD)terrainmesher.o $(LIB) -lglfw3 -lgdi32 -lopengl32 $(CFLAGS) -o $(BIN)game.exe 
+$(BIN)game: $(BUILD)game.o $(BUILD)renderer.o $(BUILD)input.o $(BUILD)terrain.o $(BUILD)terrainmesher.o $(BUILD)log.o;
+	$(CC) $(BUILD)game.o $(BUILD)log.o $(BUILD)renderer.o $(BUILD)input.o $(BUILD)terrain.o $(BUILD)terrainmesher.o $(LIB) -lglfw3 -lgdi32 -lopengl32 $(CFLAGS) -o $(BIN)game.exe 
 
-$(BUILD)game.o: $(SRC)game.cpp $(HEAD)defineterrain.hpp
+$(BUILD)game.o: $(SRC)game.cpp $(SRC)other/defineterrain.hpp
 	$(CC) -c $(SRC)game.cpp $(INC) $(CFLAGS) -o $(BUILD)game.o
 
-$(BUILD)renderer.o: $(SRC)renderer.cpp $(BUILD)res.h $(HEAD)textrenderer.hpp
-	$(CC) -c $(SRC)renderer.cpp $(INC) $(CFLAGS) -o $(BUILD)renderer.o
+$(BUILD)renderer.o: $(SRC)renderer/renderer.cpp $(BUILD)res.h $(SRC)renderer/textrenderer.hpp
+	$(CC) -c $(SRC)renderer/renderer.cpp $(INC) $(CFLAGS) -o $(BUILD)renderer.o
 
-$(BUILD)input.o: $(SRC)input.cpp
-	$(CC) -c $(SRC)input.cpp $(INC) $(CFLAGS) -o $(BUILD)input.o
+$(BUILD)input.o: $(SRC)input/input.cpp
+	$(CC) -c $(SRC)input/input.cpp $(INC) $(CFLAGS) -o $(BUILD)input.o
 
-$(BUILD)terrain.o: $(SRC)terrain.cpp
-	$(CC) -c $(SRC)terrain.cpp $(INC) $(CFLAGS) -o $(BUILD)terrain.o
+$(BUILD)terrain.o: $(SRC)terrain/terrain.cpp
+	$(CC) -c $(SRC)terrain/terrain.cpp $(INC) $(CFLAGS) -o $(BUILD)terrain.o
 
-$(BUILD)terrainmesher.o: $(SRC)terrainmesher.cpp
-	$(CC) -c $(SRC)terrainmesher.cpp $(INC) -fopenmp $(CFLAGS) -o $(BUILD)terrainmesher.o
+$(BUILD)terrainmesher.o: $(SRC)mesher/terrainmesher.cpp
+	$(CC) -c $(SRC)mesher/terrainmesher.cpp $(INC) -fopenmp $(CFLAGS) -o $(BUILD)terrainmesher.o
 
-$(BUILD)res.h: $(SRC)shader.glsl
+$(BUILD)log.o: $(SRC)log/log.cpp
+	$(CC) -c $(SRC)log/log.cpp $(INC) $(CFLAGS) -o $(BUILD)log.o
+
+$(BUILD)res.h: $(SRC)renderer/shader.glsl
 	node scripts/res.js
 
 clean:
@@ -49,7 +52,6 @@ clean:
 test: $(BIN)game
 	bin/game
 
-
-optimal:
-	node scripts/res.js
-	$(CC) $(SRC)game.cpp $(SRC)renderer.cpp $(SRC)input.cpp $(SRC)terrain.cpp $(SRC)terrainmesher.cpp $(INC) $(LIB) -lglfw3 -lgdi32 -lopengl32 $(CFLAGS) -o $(BIN)game.exe
+phystest:
+	$(CC) $(SRC)tests/aabbtest.cpp $(INC) $(CFLAGS) -o $(BUILD)phystest.exe
+	./build/phystest

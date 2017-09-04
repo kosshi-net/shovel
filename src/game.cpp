@@ -15,24 +15,26 @@
 #define GLFW_STATIC
 #include <GLFW\glfw3.h>
 
-#include <koshmath.hpp>
+#include <other/koshmath.hpp>
 
-#include <renderer.hpp>
-#include <input.hpp>
-#include <terrain.hpp>
-#include <terrainmesher.hpp>
+#include <renderer/renderer.hpp>
+#include <input/input.hpp>
+#include <terrain/terrain.hpp>
+#include <mesher/terrainmesher.hpp>
 
-#include <defineterrain.hpp>
+#include <log/log.hpp>
+
+#include <other/defineterrain.hpp>
 
 
 // Extension of self
-#include <camera.hpp>
+#include <other/camera.hpp>
 
 
 int main(void) {
 
 	if(krdr::init() != 0){
-		printf("Could not init renderer\n");
+		Logger::log("Could not init renderer\n");
 		return 1;
 	}
 	int width, height;
@@ -57,10 +59,10 @@ int main(void) {
 
 	int TERRAIN_SIZE[] = {TERRAIN_SIZE_X, TERRAIN_SIZE_Y, TERRAIN_SIZE_Z};
 
-	printf("[Main] Initializing Terrain...\n");
+	Logger::log("[Main] Initializing Terrain...\n");
 	Terrain::init( TERRAIN_SIZE );
 
-	printf("[Main] Initializing TerrainMesher...\n");
+	Logger::log("[Main] Initializing TerrainMesher...\n");
 	TerrainMesher::init(TERRAIN_SIZE, CHUNK_ROOT);
 
 	
@@ -69,19 +71,19 @@ int main(void) {
 	// double lasttick = getTime();
  
 	bool cursorLocked = false;
-	bool drawText = false;
+	bool drawText = true;
 
 
 	input::resetCursorMovement();
 
 	char title[] = "ShovelEngine";
-	char build[] = "DEV-0.0.11";
+	char build[] = "DEV-0.0.16";
 	krdr::setWindowTitle(title);
 
 	krdr::setFogColor(0.7, 0.7, 0.9, 1.0);
 
 
-	printf("[Main] Startup done!\n");
+	Logger::log("[Main] Startup done!\n");
 
 
 	while(!krdr::windowShouldClose()) {
@@ -127,17 +129,21 @@ int main(void) {
 
 			int line = 1;
 
-			static char titlebuffer[256];
+			static char txtbfr[256];
 
-			snprintf(titlebuffer, sizeof(titlebuffer), "%ifps", (int)(1.0/delta));
-			krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-			snprintf(titlebuffer, sizeof(titlebuffer), "[%i, %i, %i]", (int)camera.loc[0], (int)camera.loc[1], (int)camera.loc[2]);
-			krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			snprintf(txtbfr, sizeof(txtbfr), "%ifps", (int)(1.0/delta));
+			krdr::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			snprintf(txtbfr, sizeof(txtbfr), "[%i, %i, %i]", (int)camera.loc[0], (int)camera.loc[1], (int)camera.loc[2]);
+			krdr::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+
+			krdr::drawText( (char*)krdr::getRenderer(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			krdr::drawText( (char*)krdr::getVersion(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+
 			krdr::drawText( build, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 			krdr::drawText( "Do not distribute", -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
-			snprintf(titlebuffer, sizeof(titlebuffer), "Mshr: %i%%, %i", (int)(TerrainMesher::getActivity()*100), TerrainMesher::getCount());
-			krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			snprintf(txtbfr, sizeof(txtbfr), "Mshr: %i%%, %i", (int)(TerrainMesher::getActivity()*100), TerrainMesher::getCount());
+			krdr::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
 			
 

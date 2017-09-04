@@ -4,9 +4,7 @@
 #include <math.h>
 #include <time.h>
 
-#include <renderer.hpp>
-
-#include <terrainmesher.hpp>
+#include <mesher/terrainmesher.hpp>
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
@@ -26,7 +24,7 @@
 
 #define PI 3.14159265
 
-#include <textrenderer.hpp>
+#include <renderer/textrenderer.hpp>
 
 // kosshis renderer
 namespace krdr {
@@ -102,6 +100,12 @@ namespace krdr {
 		return window;
 	}
 
+	const unsigned char* renderer;
+	const unsigned char* version ;
+
+	const unsigned char* getRenderer() { return renderer; } ;
+	const unsigned char* getVersion() { return version; };
+
 	int init(){
 		if (!glfwInit())
 			return -1;
@@ -137,8 +141,8 @@ namespace krdr {
 		if(!initTextRenderer()) return -1;
 
 
-		const GLubyte* renderer = glGetString(GL_RENDERER); 
-		const GLubyte* version = glGetString(GL_VERSION); 
+		renderer = glGetString(GL_RENDERER); 
+		version  = glGetString(GL_VERSION); 
 		printf("Renderer: %s\n", renderer);
 		printf("OpenGL %s\n", version);
 
@@ -180,7 +184,7 @@ namespace krdr {
 	}
 
 	void meshTick(){
-		for (int j = 0; j < 16; ++j){
+		for (int j = 0; j < 4; ++j){
 			TerrainMesher::MeshBuffer* mesh = TerrainMesher::getMesh(1);
 			if(mesh == NULL) break;
 
