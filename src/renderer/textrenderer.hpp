@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <algorithm>
 
-namespace krdr {
+namespace Renderer {
 
 
 

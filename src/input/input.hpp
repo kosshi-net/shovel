@@ -1,6 +1,11 @@
 #ifndef KOSSHI_INPUT_INCLUDED
 #define KOSSHI_INPUT_INCLUDED 1
 
+#define GLEW_STATIC
+#include <GL/glew.h>
+#define GLFW_STATIC
+#include <GLFW\glfw3.h>
+
 namespace input {
 	void init(GLFWwindow*);
 

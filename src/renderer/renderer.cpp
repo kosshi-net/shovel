@@ -27,7 +27,7 @@
 #include <renderer/textrenderer.hpp>
 
 // kosshis renderer
-namespace krdr {
+namespace Renderer {
 
 	GLuint createShader(const char vertSrc[], const char fragSrc[]){
 

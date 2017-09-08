@@ -256,3 +256,45 @@ slice u v
 		
 		return (items*slices) * dimension + (items * slice);
 	}
+
+
+
+<!-- MEMORY MANAGER, 6.9.2017 -->
+
+
+void * createBlock( unsigned int size );
+
+createPartitionTable( void* blockPtr, unsigned int maxPartitions);
+/*
+	Writes a table to the block
+	[ uint, memsize ] [ uint, partcount ]
+	[ uint, pointer ] [ uint, size  ]
+	[ uint, pointer ] [ uint, size  ]
+	...
+
+	first integer is the size of the whole block
+	second integer is the count of partitions
+	after this the table begins
+
+	each element of the table has 2 values, pointer and a size
+
+	if pointer is NULL (0), theres no partition
+	pointers are an offset from the first value of the whole block
+
+
+*/
+
+int partCount(void* block){
+	return block[1];
+}
+
+int partTableSize(
+){
+	
+}
+
+alloc( void* block, size ) {
+	
+	
+
+}

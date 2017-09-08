@@ -164,7 +164,7 @@ namespace Terrain {
 
 		char txtbfr[128];
 
-		snprintf(txtbfr, sizeof(txtbfr), "[Terrain] Allocating %i*%i*%i blocks (%i MB);\n", terrain.root[0], terrain.root[1], terrain.root[2], size/1024/1024);
+		snprintf(txtbfr, sizeof(txtbfr), "TERRAIN :: Allocating %i*%i*%i blocks (%i MB);", terrain.root[0], terrain.root[1], terrain.root[2], size/1024/1024);
 
 		Logger::log(txtbfr);
 

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>
+#include <ctime>
 #include <limits.h>
 
 // Third party
@@ -15,59 +15,70 @@
 #define GLFW_STATIC
 #include <GLFW\glfw3.h>
 
-#include <other/koshmath.hpp>
-
 #include <renderer/renderer.hpp>
 #include <input/input.hpp>
 #include <terrain/terrain.hpp>
 #include <mesher/terrainmesher.hpp>
-
 #include <log/log.hpp>
+
+
+#include <entity/entity.hpp>
+#include <entity/entityfactory.hpp>
+
+#include <system/localcontrol.hpp>
+#include <system/physics.hpp>
+#include <system/camera.hpp>
 
 #include <other/defineterrain.hpp>
 
 
-// Extension of self
-#include <other/camera.hpp>
+#define SHOVEL_VERSION "DEV-0.0.19"
 
+#define TICK CLOCKS_PER_SEC/60
+#define SKIP TICK*10
 
 int main(void) {
 
-	if(krdr::init() != 0){
-		Logger::log("Could not init renderer\n");
+	Logger::init();
+
+
+
+	if(Renderer::init() != 0){
+		Logger::error("MAIN :: ERROR:: Could not init renderer\n");
 		return 1;
 	}
 	int width, height;
-	krdr::getWindowSize(&width, &height);
+	Renderer::getWindowSize(&width, &height);
 
 
 	float sx = 2.0 / width;
 	float sy = 2.0 / height;
 
-	krdr::setFogColor(0.7, 0.7, 0.9, 1.0);
+	Renderer::setFogColor(0.7, 0.7, 0.9, 1.0);
 
-	krdr::startFrame();
-	krdr::drawText( "Please wait, loading... ", -1 + 8 * sx,   1 - 40 * sy,    sx, sy, 20 );
-	krdr::drawText( "Copyright (c) kosshi.fi, do not distribute ", -1 + 8 * sx,   1 - 20 * sy,    sx, sy, 20 );
-	krdr::swapBuffers();
+	Renderer::startFrame();
+	Renderer::drawText( "Please wait, loading... ", 
+		-1 + 8 * sx,   1 - 40 * sy, sx, sy, 20 );
+	Renderer::drawText( "Copyright (c) kosshi.fi, do not distribute ", 
+		-1 + 8 * sx,   1 - 20 * sy, sx, sy, 20 );
+	Renderer::swapBuffers();
 
-	input::init(krdr::getWindow());
+	input::init(Renderer::getWindow());
+	ECS::init();
 
-	glm::mat4 projection;
-
-	Camera camera(glm::vec3(256.0f, 128.0f, 256.0f ), 180.0f, 0.0f);
+	EntityFactory::createPlayer();
 
 	int TERRAIN_SIZE[] = {TERRAIN_SIZE_X, TERRAIN_SIZE_Y, TERRAIN_SIZE_Z};
 
-	Logger::log("[Main] Initializing Terrain...\n");
+	Logger::log("MAIN :: Initializing Terrain...");
 	Terrain::init( TERRAIN_SIZE );
 
-	Logger::log("[Main] Initializing TerrainMesher...\n");
+	Logger::log("MAIN :: Initializing TerrainMesher...");
 	TerrainMesher::init(TERRAIN_SIZE, CHUNK_ROOT);
 
 	
 
-	double lasttime = krdr::getTime();
+	double lasttime = Renderer::getTime();
 	// double lasttick = getTime();
  
 	bool cursorLocked = false;
@@ -77,79 +88,61 @@ int main(void) {
 	input::resetCursorMovement();
 
 	char title[] = "ShovelEngine";
-	char build[] = "DEV-0.0.16";
-	krdr::setWindowTitle(title);
+	char build[] = SHOVEL_VERSION;
+	Renderer::setWindowTitle(title);
 
-	krdr::setFogColor(0.7, 0.7, 0.9, 1.0);
-
-
-	Logger::log("[Main] Startup done!\n");
+	Renderer::setFogColor(0.7, 0.7, 0.9, 1.0);
 
 
-	while(!krdr::windowShouldClose()) {
-		double currenttime = krdr::getTime();
+	Logger::log("MAIN :: Startup done!");
+
+	clock_t physTime = 0;
+
+	static char txtbfr[256];
+
+	while(!Renderer::windowShouldClose()) {
+		double currenttime = Renderer::getTime();
 		double delta = currenttime-lasttime;
 
-		krdr::startFrame();
 
-		krdr::getWindowSize(&width, &height);
+		Renderer::getWindowSize(&width, &height);
 
-		double cx, cy;
-		input::getCursorPos(&cx, &cy);
-		if(cursorLocked){
-			cx = width*0.5;
-			cy = height*0.5;
-		}
+		clock_t now = clock();
+		CameraSystem::draw( (now - physTime) / (float)TICK );
 
-		float ratio = (float)width /(float)height;
-		projection = glm::perspective(90.0f, ratio, 0.01f, 1000.0f);
-
-		glm::mat4 projectionRotation = glm::perspective(90.0f, ratio, 0.01f, 1000.0f);
-		projectionRotation = glm::rotate(projectionRotation, degToRad(camera.pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-		projectionRotation = glm::rotate(projectionRotation, degToRad(-camera.yaw),  glm::vec3(0.0f, 1.0f, 0.0f));
-
-		glm::mat4 view = glm::mat4();
-		view = glm::rotate		(view, degToRad(camera.pitch), glm::vec3(1.0f, 0.0f, 0.0f));
-		view = glm::rotate		(view, degToRad(-camera.yaw),  glm::vec3(0.0f, 1.0f, 0.0f));
-		view = glm::translate	(view, -glm::vec3(camera.loc[0], camera.loc[1], camera.loc[2]));
-
-		// glm::mat4 model = glm::mat4();
-
-		krdr::draw(view, projection);
-
-
-		
-			
+		// DEBUG
 		if(drawText){ 
 			sx = 2.0 / width;
 			sy = 2.0 / height;
 
 
-			// glm::vec3 vec = krdr::screenToWorldSpaceVector(cx, width, cy, height, projectionRotation);
+			// glm::vec3 vec = Renderer::screenToWorldSpaceVector(cx, width, cy, height, projectionRotation);
 
 			int line = 1;
 
-			static char txtbfr[256];
 
 			snprintf(txtbfr, sizeof(txtbfr), "%ifps", (int)(1.0/delta));
-			krdr::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-			snprintf(txtbfr, sizeof(txtbfr), "[%i, %i, %i]", (int)camera.loc[0], (int)camera.loc[1], (int)camera.loc[2]);
-			krdr::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			// snprintf(txtbfr, sizeof(txtbfr), "[%i, %i, %i]", (int)camera.loc[0], (int)camera.loc[1], (int)camera.loc[2]);
+			// Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
-			krdr::drawText( (char*)krdr::getRenderer(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-			krdr::drawText( (char*)krdr::getVersion(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( (char*)Renderer::getRenderer(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( (char*)Renderer::getVersion(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
-			krdr::drawText( build, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-			krdr::drawText( "Do not distribute", -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( build, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( "Do not distribute", -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
 			snprintf(txtbfr, sizeof(txtbfr), "Mshr: %i%%, %i", (int)(TerrainMesher::getActivity()*100), TerrainMesher::getCount());
-			krdr::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+
+			snprintf(txtbfr, sizeof(txtbfr), "Lerp: %f", (now - physTime) / (float)TICK);
+			Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
 			
 
 
 			// snprintf(titlebuffer, sizeof(titlebuffer), "[%f, %f, %f]", vec[0], vec[1], vec[2]);
-			// krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			// Renderer::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
 
 
@@ -162,26 +155,34 @@ int main(void) {
 				// &dist, hitloc, normal, &block
 			// );
 			// snprintf(titlebuffer, sizeof(titlebuffer), "hit: %f", dist);
-			// krdr::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-
-
+			// Renderer::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 		}
 
-		glfwPollEvents();
 
-		double rx, ry;
-		input::getCursorMovement(&rx, &ry);
+		if( now - physTime > TICK ) {
+			if( now - physTime > SKIP ){
+				snprintf(txtbfr, sizeof(txtbfr), "MAIN :: WARN :: Can't keep up! Skipped %li!", (now - physTime) );
+				Logger::warn( txtbfr );
+				physTime = now;
+			} else {
+				physTime += TICK;
+			}
+			LocalControlSystem::run(cursorLocked);
+			PhysicsSystem::run();
+		}
 
-
+		double cx, cy;
+		input::getCursorPos(&cx, &cy);
 		if(cursorLocked){
-			camera.yaw+=rx*0.1f;
-			camera.pitch-=ry*0.1f;
+			cx = width*0.5;
+			cy = height*0.5;
 		}
-
+		/*
 		if(input::getMouseButton(1)){
 			
 
-			glm::vec3 vec = krdr::screenToWorldSpaceVector(cx, width, cy, height, projectionRotation);
+			glm::vec3 vec = Renderer::screenToWorldSpaceVector(
+				cx, width, cy, height, projectionRotation);
 
 			int hitloc[3]={0};
 			int normal[3]={0};
@@ -215,35 +216,7 @@ int main(void) {
 
 			}
 		}
-
-
-		float pitch = degToRad(-camera.pitch);
-		float yaw = degToRad(camera.yaw);
-
-		float s = 20.0f;
-
-
-		glm::vec3 dir(
-			cosf(pitch) * sinf(yaw),
-			sinf(-pitch),
-			cosf(pitch) * cosf(yaw)
-		);
-		glm::vec3 right(
-			sinf(yaw - 3.14/2), 
-			0,
-			cosf(yaw - 3.14/2)
-		);
-
-		right*=s;
-		dir*=s;
-
-		right*=delta*5;
-		dir*=delta*5;
-
-		if (input::getKey(GLFW_KEY_S)) camera.loc+=dir;
-		if (input::getKey(GLFW_KEY_W)) camera.loc-=dir;
-		if (input::getKey(GLFW_KEY_D)) camera.loc-=right;
-		if (input::getKey(GLFW_KEY_A)) camera.loc+=right;
+		*/
 
 
 		static int kec = 0;
@@ -261,7 +234,7 @@ int main(void) {
 						drawText = !drawText;
 						break;
 					case GLFW_KEY_F2:
-						krdr::toggleWireframe();
+						Renderer::toggleWireframe();
 						break;
 
 				}
@@ -282,9 +255,12 @@ int main(void) {
 						if(!input::getKey(GLFW_KEY_LEFT_SHIFT) && !cursorLocked){
 							input::lockCursor();
 							cursorLocked = true;
-						} else {
+						} 
+						/*
+						else {
 
-							glm::vec3 vec = krdr::screenToWorldSpaceVector(cx, width, cy, height, projectionRotation);
+							glm::vec3 vec = Renderer::screenToWorldSpaceVector(
+								cx, width, cy, height, projectionRotation);
 
 							int hitloc[3]={0}; int normal[3]={0};
 							char block = 0;  float dist = 2000.0;
@@ -298,16 +274,17 @@ int main(void) {
 								Terrain::write(hitloc, 0);
 								TerrainMesher::markDirty(hitloc);
 							}
-
 							break;
 						}
+							*/
+
 				}
 				
 			}
 		}
 		input::resetMouseEventCount();
 
-		krdr::swapBuffers();
+		Renderer::swapBuffers();
 
 		lasttime = currenttime;
 	}

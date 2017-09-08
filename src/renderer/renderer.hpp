@@ -10,7 +10,7 @@
 #define GLFW_STATIC
 #include <GLFW\glfw3.h>
 
-namespace krdr {
+namespace Renderer {
 	int init(void);
 	GLFWwindow* getWindow(void);
 
@@ -24,18 +24,14 @@ namespace krdr {
 
 	void swapBuffers(void);
 
-
 	void getWindowSize(int *width, int *height);
 	void setWindowTitle(char titlebuffer[]);
 
-	// void drawText(const signed char*, float, float, float, float, int);
-	// void drawText(const unsigned char*, float, float, float, float, int);
 	void drawText(const char*, float, float, float, float, int);
 
 	void setFogColor(float, float, float, float);
 
 	glm::vec3 screenToWorldSpaceVector(int x, int max_x, int y, int max_y, glm::mat4);
-
 
 	const unsigned char* getRenderer();
 	const unsigned char* getVersion() ;

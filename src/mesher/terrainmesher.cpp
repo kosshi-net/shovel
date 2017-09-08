@@ -330,7 +330,7 @@ namespace TerrainMesher {
 		int bsize = MESH_BUFFER_SIZE;
 
 
-		snprintf( txtbfr, sizeof(txtbfr), "Attemtping to allocate %i MB...", ((bsize*sizeof(float))*3 + (chunks.root * (chunks.root*chunks.root) * sizeof(short)))*MESH_BUFFER_COUNT / 1024 / 1024 );
+		snprintf( txtbfr, sizeof(txtbfr), "MESHERTHREAD :: Attemtping to allocate %i MB...", ((bsize*sizeof(float))*3 + (chunks.root * (chunks.root*chunks.root) * sizeof(short)))*MESH_BUFFER_COUNT / 1024 / 1024 );
 
 		Logger::log(txtbfr);
 
@@ -351,7 +351,7 @@ namespace TerrainMesher {
 
 		}
 
-		Logger::log("Success!");
+		Logger::log("MESHERTHREAD :: Done allocating!");
 
 		clock_t lastClock = clock();
 		clock_t activeTime = 0;
@@ -363,7 +363,7 @@ namespace TerrainMesher {
 			MeshBuffer*m = getMesh( 0 );
 
 			if(m == NULL) {
-				Logger::log("SLEEP");
+				Logger::warn("SLEEP");
 				xsleep(10);
 				continue;
 			}
@@ -419,7 +419,7 @@ namespace TerrainMesher {
 
 
 
-		snprintf( txtbfr, sizeof(txtbfr), "[TerraMesher] Allocating %i chunk objects, %i B  ...", chunks.count, chunks.count*sizeof(int)*8);
+		snprintf( txtbfr, sizeof(txtbfr), "MESHER :: Allocating %i chunk objects, %i B  ...", chunks.count, chunks.count*sizeof(int)*8);
 		Logger::log(txtbfr);
 		chunks.x =				(int*)			malloc(sizeof(int) * chunks.count );
 		chunks.y =				(int*)			malloc(sizeof(int) * chunks.count );
@@ -437,7 +437,7 @@ namespace TerrainMesher {
 		// 1 << 1 Dirty
 		// 1 << 0 BufferCreated
 
-		Logger::log("[TerraMesher] Filling...\n");
+		Logger::log("MESHER :: Filling...");
 		int i = 0;
 		for (int x = 0; x < terrainroot[0]/chunkroot; ++x)
 		for (int y = 0; y < terrainroot[1]/chunkroot; ++y)
@@ -454,7 +454,7 @@ namespace TerrainMesher {
 		}
 
 		pthread_create( &thread, NULL, &threadMain, NULL);
-		Logger::log("[TerrainMesher] Mesher thread started!\n");
+		Logger::log("MESHER :: Mesher thread started!\n");
 	}
 
 	void markDirtySingle(int l[]){
