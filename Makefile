@@ -54,3 +54,8 @@ clean:
 	@del build\* /Q
 	@del src\*.o /Q /S
 	@del bin\game.exe /Q
+
+git:
+	git add *
+	git commit
+	git push
