@@ -31,7 +31,11 @@ namespace Renderer {
 
 	void setFogColor(float, float, float, float);
 
-	glm::vec3 screenToWorldSpaceVector(int x, int max_x, int y, int max_y, glm::mat4);
+	glm::vec3 screenToWorldSpaceVector(
+		int x, int max_x, 
+		int y, int max_y, 
+		glm::mat4
+	);
 
 	const unsigned char* getRenderer();
 	const unsigned char* getVersion() ;

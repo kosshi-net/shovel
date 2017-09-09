@@ -21,6 +21,7 @@
 #include <mesher/terrainmesher.hpp>
 #include <log/log.hpp>
 
+#include <event/event.hpp>
 
 #include <entity/entity.hpp>
 #include <entity/entityfactory.hpp>
@@ -116,52 +117,51 @@ int main(void) {
 			sy = 2.0 / height;
 
 
-			// glm::vec3 vec = Renderer::screenToWorldSpaceVector(cx, width, cy, height, projectionRotation);
+			// glm::vec3 vec = Renderer::screenToWorldSpaceVector(
+			// 		cx, width, cy, height, projectionRotation);
 
 			int line = 1;
 
 
 			snprintf(txtbfr, sizeof(txtbfr), "%ifps", (int)(1.0/delta));
-			Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-			// snprintf(txtbfr, sizeof(txtbfr), "[%i, %i, %i]", (int)camera.loc[0], (int)camera.loc[1], (int)camera.loc[2]);
-			// Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( txtbfr,
+				-1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
-			Renderer::drawText( (char*)Renderer::getRenderer(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-			Renderer::drawText( (char*)Renderer::getVersion(), -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( (char*)Renderer::getRenderer(),
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			Renderer::drawText( build, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-			Renderer::drawText( "Do not distribute", -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( (char*)Renderer::getVersion(),
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			snprintf(txtbfr, sizeof(txtbfr), "Mshr: %i%%, %i", (int)(TerrainMesher::getActivity()*100), TerrainMesher::getCount());
-			Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( build,
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			snprintf(txtbfr, sizeof(txtbfr), "Lerp: %f", (now - physTime) / (float)TICK);
-			Renderer::drawText( txtbfr, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( "Do not distribute",
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			
+			snprintf(txtbfr, sizeof(txtbfr), "Mshr: %i%%, %i", 
+				(int)(TerrainMesher::getActivity()*100), 
+				TerrainMesher::getCount()
+			);
+			Renderer::drawText( txtbfr, 
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
+			snprintf(txtbfr, sizeof(txtbfr), 
+				"Lerp: %f", 
+				(now - physTime) / (float)TICK
+			);
 
-			// snprintf(titlebuffer, sizeof(titlebuffer), "[%f, %f, %f]", vec[0], vec[1], vec[2]);
-			// Renderer::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
-
-
-
-			// int hitloc[3]={0};
-			// int normal[3]={0};
-			// char block = 0;
-			// float dist = 2000.0;
-			// Terrain::raycast(
-				// &vec[0], &camera.loc[0],
-				// &dist, hitloc, normal, &block
-			// );
-			// snprintf(titlebuffer, sizeof(titlebuffer), "hit: %f", dist);
-			// Renderer::drawText( titlebuffer, -1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
+			Renderer::drawText( txtbfr, 
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 		}
 
 
 		if( now - physTime > TICK ) {
 			if( now - physTime > SKIP ){
-				snprintf(txtbfr, sizeof(txtbfr), "MAIN :: WARN :: Can't keep up! Skipped %li!", (now - physTime) );
+				snprintf(txtbfr, sizeof(txtbfr), 
+					"MAIN :: WARN :: Can't keep up! Skipped %li!", 
+					(now - physTime) 
+				);
 				Logger::warn( txtbfr );
 				physTime = now;
 			} else {
@@ -248,39 +248,42 @@ int main(void) {
 		for (int i = 0; i < kec; ++i) {
 			input::MouseEvent e = input::getMouseEvent(i);
 			// printf("Keycode: %i, %i\n", e.key, e.action);
-			if(e.action) {
-				switch (e.button){
-					case 0:
+			if(e.action)
+			switch (e.button){
+				case 0:
 
-						if(!input::getKey(GLFW_KEY_LEFT_SHIFT) && !cursorLocked){
-							input::lockCursor();
-							cursorLocked = true;
-						} 
-						/*
-						else {
+					if( !input::getKey(GLFW_KEY_LEFT_SHIFT) 
+						&& !cursorLocked
+					){
+						input::lockCursor();
+						cursorLocked = true;
+					} 
+					/*
+					else {
 
-							glm::vec3 vec = Renderer::screenToWorldSpaceVector(
-								cx, width, cy, height, projectionRotation);
+						glm::vec3 vec = 
+						Renderer::screenToWorldSpaceVector(
+							cx, width, cy, height, projectionRotation);
 
-							int hitloc[3]={0}; int normal[3]={0};
-							char block = 0;  float dist = 2000.0;
+						int hitloc[3]={0}; int normal[3]={0};
+						char block = 0;  float dist = 2000.0;
 
-							bool hit = Terrain::raycast(
-								&vec[0], &camera.loc[0],
-								&dist, hitloc, normal, &block
-							);
+						bool hit = Terrain::raycast(
+							&vec[0], &camera.loc[0],
+							&dist, hitloc, normal, &block
+						);
 
-							if(hit && Terrain::saferead(hitloc)){
-								Terrain::write(hitloc, 0);
-								TerrainMesher::markDirty(hitloc);
-							}
-							break;
+						if(hit && Terrain::saferead(hitloc)){
+							Terrain::write(hitloc, 0);
+							TerrainMesher::markDirty(hitloc);
 						}
-							*/
+						break;
+					}
+						*/
 
-				}
-				
 			}
+			
+		
 		}
 		input::resetMouseEventCount();
 
@@ -288,7 +291,8 @@ int main(void) {
 
 		lasttime = currenttime;
 	}
-
+	Logger::log("MAIN :: Shutting down..");
+	EventSystem::fire( EventSystem::EVENT_SHUTDOWN, NULL );
 	glfwTerminate();
 	return 0;
 }

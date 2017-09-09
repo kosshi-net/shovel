@@ -38,6 +38,7 @@ namespace ECS
 
 	typedef struct {
 		int mask; // Componentmask
+		int controlmask;
 		unsigned long GUID;
 		float location[3];
 		float velocity[3];

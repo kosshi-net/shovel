@@ -42,16 +42,20 @@ namespace Renderer {
 
 		glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if ( InfoLogLength > 0 ){
-			char * ProgramErrorMessage = (char*)malloc(InfoLogLength+1);
-			glGetShaderInfoLog(vs, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-			printf("Vertex shader failed to compile! LOG:\n%s\n", &ProgramErrorMessage[0]);
+			char * err = (char*)malloc(InfoLogLength+1);
+			glGetShaderInfoLog(vs, InfoLogLength, NULL, 
+				&err[0]);
+			printf("Vertex shader failed to compile! LOG:\n%s\n", 
+				&err[0]);
 			MessageBox(0, "Vertex shader failed to compile!", "Error!", 0);
 		}
 		glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if ( InfoLogLength > 0 ){
-			char * ProgramErrorMessage = (char*)malloc(InfoLogLength+1);
-			glGetShaderInfoLog(fs, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-			printf("Fragment shader failed to compile! LOG:\n%s\n", &ProgramErrorMessage[0]);
+			char * err = (char*)malloc(InfoLogLength+1);
+			glGetShaderInfoLog(fs, InfoLogLength, NULL, 
+				&err[0]);
+			printf("Fragment shader failed to compile! LOG:\n%s\n", 
+				&err[0]);
 			MessageBox(0, "Fragment shader failed to compile!", "Error!", 0);
 		}
 
@@ -62,9 +66,9 @@ namespace Renderer {
 
 		glGetProgramiv(shader_program, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if ( InfoLogLength > 0 ){
-			char * ProgramErrorMessage = (char*)malloc(InfoLogLength+1);
-			glGetProgramInfoLog(shader_program, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-			printf("SHADERPROGRAM LINK FAILURE! LOG:\n%s\n", &ProgramErrorMessage[0]);
+			char * err = (char*)malloc(InfoLogLength+1);
+			glGetProgramInfoLog(shader_program, InfoLogLength, NULL, &err[0]);
+			printf("SHADERPROGRAM LINK FAILURE! LOG:\n%s\n", &err[0]);
 			MessageBox(0, "Shader link failure!", "Error!", 0);
 		}
 
@@ -173,7 +177,11 @@ namespace Renderer {
 		glPolygonMode( GL_FRONT_AND_BACK, wireFrame ? GL_LINE : GL_FILL );
 	}
 
-	glm::vec3 screenToWorldSpaceVector(int x, int max_x, int y, int max_y, glm::mat4 pRotMat){
+	glm::vec3 screenToWorldSpaceVector(
+		int x, int max_x, 
+		int y, int max_y, 
+		glm::mat4 pRotMat
+	){
 		glm::vec4 ray_clip = {
 			 (x/(float)max_x) * 2.0f - 1.0f,
 			-(y/(float)max_y) * 2.0f + 1.0f,
@@ -193,7 +201,7 @@ namespace Renderer {
 			int i = mesh->chunk;
 			TerrainMesher::ChunkList* chunks = TerrainMesher::getChunks();
 
-			// Check if buffers have ever been generated for this chunk, if no, gen!
+			// Check if buffers have ever been generated, if no, gen!
 			if( chunks->state[i] & 0b10 ){
 				glGenBuffers(1, &chunks->vertexBuffer[i] );
 				glGenBuffers(1, &chunks->indexBuffer [i] );
@@ -204,15 +212,29 @@ namespace Renderer {
 
 			glBindBuffer(GL_ARRAY_BUFFER, chunks->vertexBuffer[i]);
 			int size = mesh->vertexCount * sizeof(float);
-			glBufferData(GL_ARRAY_BUFFER, size, mesh->vertexBuffer, GL_STATIC_DRAW);
+			glBufferData(
+				GL_ARRAY_BUFFER, 
+				size, 
+				mesh->vertexBuffer, 
+				GL_STATIC_DRAW
+			);
 
 			glBindBuffer(GL_ARRAY_BUFFER, chunks->colorBuffer[i]);
 			size = mesh->vertexCount * sizeof(float);
-			glBufferData(GL_ARRAY_BUFFER, size, mesh->colorBuffer, GL_STATIC_DRAW);
+			glBufferData(
+				GL_ARRAY_BUFFER, 
+				size, 
+				mesh->colorBuffer, 
+				GL_STATIC_DRAW);
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks->indexBuffer[i]);
 			size = mesh->indexCount * sizeof(int);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, mesh->indexBuffer, GL_STATIC_DRAW);
+			glBufferData(
+				GL_ELEMENT_ARRAY_BUFFER, 
+				size, 
+				mesh->indexBuffer, 
+				GL_STATIC_DRAW
+			);
 
 			chunks->items[i] = mesh->indexCount;
 
@@ -247,16 +269,22 @@ namespace Renderer {
 			count++;
 			if ( chunks->items[i] > 0 ) {
 
-				glBindBuffer(GL_ARRAY_BUFFER, 			chunks->colorBuffer[i] );
-				// glVertexAttribPointer(shader_aColor, 3, GL_BYTE, GL_TRUE, 0, NULL);
-				glVertexAttribPointer(shader_aColor, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+				glBindBuffer(GL_ARRAY_BUFFER, chunks->colorBuffer[i] );
 
-				glBindBuffer(GL_ARRAY_BUFFER, 			chunks->vertexBuffer[i]);
-				glVertexAttribPointer(shader_aVertex, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+				glVertexAttribPointer(
+					shader_aColor, 3, GL_FLOAT, GL_FALSE, 0, NULL
+				);
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,	chunks->indexBuffer [i]);
+				glBindBuffer(GL_ARRAY_BUFFER, chunks->vertexBuffer[i]);
+				glVertexAttribPointer(
+					shader_aVertex, 3, GL_FLOAT, GL_FALSE, 0, NULL
+				);
 
-				glDrawElements(GL_TRIANGLES, chunks->items[i], GL_UNSIGNED_INT, 0);	
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks->indexBuffer [i]);
+
+				glDrawElements(
+					GL_TRIANGLES, chunks->items[i], GL_UNSIGNED_INT, 0
+				);	
 			}
 		}
 

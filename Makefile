@@ -3,7 +3,10 @@ SRC= src/
 BIN= bin/
 BUILD= build/
 CC= g++
-CFLAGS= -O3 -ftree-vectorize -msse3 -static -fopenmp -Wall -static-libgcc -static-libstdc++ -std=c++11 -m32
+CFLAGS= \
+	-O3 -ftree-vectorize -msse3 -m32 -Wall \
+	-static -fopenmp -static-libgcc -static-libstdc++ -std=c++11
+
 #-Wl,-subsystem,windows -fopt-info-vec-missed 
 EXT = lib/
 GLFW = $(EXT)glfw-3.2.1/
@@ -12,9 +15,20 @@ SIMPLEX = $(EXT)simplex-1.0/
 GLM = $(EXT)glm-0.9.8.4/
 FT = $(EXT)freetype-2.8/
 
-INC = -I $(GLFW)include -I $(GLEW)include -I $(SIMPLEX)include -I $(GLM)include -I $(FT)include -I include -I src
-LIB =   $(GLEW)lib/glew.o -L $(GLFW)lib $(SIMPLEX)lib/simplex.o $(FT)lib/libfreetype.a
-HEAD = include/
+INC = \
+	-I $(GLFW)include \
+	-I $(GLEW)include \
+	-I $(SIMPLEX)include \
+	-I $(GLM)include \
+	-I $(FT)include \
+	-I include \
+	-I src
+
+LIB = \
+	$(GLEW)lib/glew.o \
+	-L $(GLFW)lib \
+	$(SIMPLEX)lib/simplex.o \
+	$(FT)lib/libfreetype.a
 
 OBJECTS = \
 $(SRC)game.o \
@@ -29,13 +43,15 @@ $(SRC)system/localcontrol.o \
 $(SRC)system/physics.o \
 $(SRC)system/camera.o \
 $(SRC)other/util.o \
+$(SRC)event/event.o \
 
 
 $(BIN)game: $(OBJECTS)
 	@echo Linking $@
 	@$(CC) $^ $(LIB) -lglfw3 -lgdi32 -lopengl32 $(CFLAGS) -o $(BIN)game.exe 
 
-$(BUILD)renderer.o: $(SRC)renderer/renderer.cpp $(BUILD)res.h $(SRC)renderer/textrenderer.hpp
+$(BUILD)renderer.o: \
+$(SRC)renderer/renderer.cpp $(BUILD)res.h $(SRC)renderer/textrenderer.hpp
 	@echo Building $@
 	@$(CC) -c $< $(INC) $(CFLAGS) -o $@
 
@@ -49,7 +65,8 @@ $(BUILD)res.h: $(SRC)renderer/shader.glsl
 run: bin/game
 	@bin/game
 
-.PHONY: clean
+.PHONY: clean git
+
 clean:
 	@del build\* /Q
 	@del src\*.o /Q /S

@@ -29,7 +29,7 @@ namespace Terrain {
 
 	// Reads from the volume with an coordinate
 	char read(int l[3]){
-		int i = (l[0] + terrain.root[0] * (l[1] + terrain.root[1] * l[2]) );
+		int i = (l[0] + terrain.root[0] * (l[1] + terrain.root[1] * l[2]) );                                    
 		return terrain.vxl[i];
 	}
 
@@ -59,9 +59,24 @@ namespace Terrain {
 		for (int x = 0; x < terrain.root[0]; ++x)
 		for (int z = 0; z < terrain.root[2]; ++z)
 		{	
-			float a = (glm::simplex(glm::vec3((x+9001) * 0.0050, 0.0f,   (z+9001) * 0.0050)) + 1.0 ) / 2.0;
-			float b = (glm::simplex(glm::vec3((x+9001) * 0.1000, 0.0f,   (z+9001) * 0.1000)) + 1.0 ) / 2.0;
-			float c = (glm::simplex(glm::vec3((x+9001) * 0.0010, 0.0f,   (z+9001) * 0.0010)) + 1.0 ) / 2.0;
+			float a = (glm::simplex(glm::vec3(
+				(x+9001) * 0.0050,
+				0.0f,
+				(z+9001) * 0.0050)) + 1.0 
+			) / 2.0;
+
+			float b = (glm::simplex(glm::vec3(
+				(x+9001) * 0.1000,
+				0.0f,
+				(z+9001) * 0.1000)) + 1.0 
+			) / 2.0;
+
+			float c = (glm::simplex(glm::vec3(
+				(x+9001) * 0.0010,
+				0.0f,
+				(z+9001) * 0.0010)) + 1.0 
+			) / 2.0;
+
 			int h = 
 				pow( a*c, 2.0 )*300+15
 				+ pow(b*a, 2.0)*50;
@@ -119,7 +134,11 @@ namespace Terrain {
 			for (int j = 0; j < 3; ++j) t[i][j] = vector[j] / vector[i];
 
 		for (int i = 0; i < 3; ++i) {
-			deltaDist[i] = sqrt( t[i][0]*t[i][0] + t[i][1]*t[i][1] + t[i][2]*t[i][2] );
+			deltaDist[i] = sqrt( 
+				t[i][0]*t[i][0] + 
+				t[i][1]*t[i][1] + 
+				t[i][2]*t[i][2] 
+			);
 
 			if (vector[i] < 0) {
 				step[i] = -1.0f;
@@ -164,11 +183,17 @@ namespace Terrain {
 
 		char txtbfr[128];
 
-		snprintf(txtbfr, sizeof(txtbfr), "TERRAIN :: Allocating %i*%i*%i blocks (%i MB);", terrain.root[0], terrain.root[1], terrain.root[2], size/1024/1024);
+		snprintf(txtbfr, sizeof(txtbfr), 
+			"TERRAIN :: Allocating %i*%i*%i blocks (%i MB);", 
+			terrain.root[0], terrain.root[1], terrain.root[2], 
+			size/1024/1024
+		);
 
 		Logger::log(txtbfr);
 
-		terrain.vxl = (char*)malloc(terrain.root[0]*terrain.root[1]*terrain.root[2]*sizeof(char));
+		terrain.vxl = (char*)malloc(
+			terrain.root[0]*terrain.root[1]*terrain.root[2]*sizeof(char)
+		);
 
 		for (int i = 0; i < 3; ++i) terrain.offset[i] = 0;
 

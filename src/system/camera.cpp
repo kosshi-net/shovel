@@ -64,8 +64,12 @@ namespace CameraSystem {
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
-		glm::vec3 location = glm::vec3(e->location[0], e->location[1], e->location[2]);
-		glm::vec3 velocity = glm::vec3(e->velocity[0], e->velocity[1], e->velocity[2]);
+		glm::vec3 location = glm::vec3(
+			e->location[0], e->location[1], e->location[2]
+		);
+		glm::vec3 velocity = glm::vec3(
+			e->velocity[0], e->velocity[1], e->velocity[2]
+		);
 
 		if(ENABLE_LERP) location = location + velocity * lerp;
 

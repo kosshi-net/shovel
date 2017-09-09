@@ -3,7 +3,14 @@
 
 namespace Physics {
 
-	float saabb( const float a_min[3], const float a_max[3], const float a_vel[3], const float b_min[3], const float b_max[3], const float b_vel[3]){
+	float saabb( 
+		const float a_min[3], 
+		const float a_max[3], 
+		const float a_vel[3], 
+		const float b_min[3], 
+		const float b_max[3], 
+		const float b_vel[3]
+	){
 
 		float invEntry[3];
 		float invExit[3];

@@ -125,7 +125,7 @@ namespace Renderer {
 		atlasHeight = max_y;
 		atlasWidth  = total_x;
 
-		atlas = (unsigned char*) calloc(atlasHeight*atlasWidth, 1);
+		atlas = (unsigned char*) malloc(atlasHeight*atlasWidth);
 
 		for (int i = 0; i < 128; ++i)
 		{
@@ -135,7 +135,8 @@ namespace Renderer {
 			for (int y = 0; y < AChar[i].height; ++y)
 			for (int x = 0; x < AChar[i].width;  ++x)
 			{
-				atlas[ atlasWidth * y + AChar[i].x + x ] = face->glyph->bitmap.buffer[ AChar[i].width * y + x];	
+				atlas[ atlasWidth * y + AChar[i].x + x ] =
+					face->glyph->bitmap.buffer[ AChar[i].width * y + x];
 			}
 			
 
@@ -175,7 +176,8 @@ namespace Renderer {
 
 
 		glTexImage2D(
-			GL_TEXTURE_2D, 0, GL_RED, atlasWidth, atlasHeight, 0, GL_RED, GL_UNSIGNED_BYTE, atlas
+			GL_TEXTURE_2D, 0, GL_RED, atlasWidth, atlasHeight, 0, 
+			GL_RED, GL_UNSIGNED_BYTE, atlas
 		);
 
 		glGenBuffers(1, &text_vbo);
@@ -188,7 +190,12 @@ namespace Renderer {
 	}
 
 
-	void drawText(const char *text, float x, float y, float sx, float sy, int fontSize) {
+	void drawText(
+		const char *text, 
+		float x,  float y, 
+		float sx, float sy, 
+		int fontSize
+	){
 		glUseProgram(textShader);
 		glBindBuffer(GL_ARRAY_BUFFER, text_vbo);
 		glEnableVertexAttribArray(textShader_aCoord);
@@ -240,7 +247,8 @@ namespace Renderer {
 		}
 
 		glVertexAttribPointer(textShader_aCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glBufferData(GL_ARRAY_BUFFER, bufIndex*sizeof(float), geometryBuffer, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, bufIndex*sizeof(float), 
+			geometryBuffer, GL_DYNAMIC_DRAW);
 		glDrawArrays(GL_TRIANGLES, 0, 6*count);
 
 		glDisableVertexAttribArray(textShader_aCoord);

@@ -31,7 +31,9 @@ namespace input {
 	MouseEvent MouseEventStack[MouseEventStackSize];
 	int MouseEventCount = 0;
 
-	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+	void mouse_button_callback(
+		GLFWwindow* window, int button, int action, int mods
+	){
 		if( MouseEventCount < MouseEventStackSize) {
 			MouseEventStack[MouseEventCount].button = button;
 			MouseEventStack[MouseEventCount].action = action;
@@ -58,7 +60,9 @@ namespace input {
 	KeyEvent KeyEventStack[KeyEventStackSize];
 	int KeyEventCount = 0;
 
-	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+	void key_callback(
+		GLFWwindow* window, int key, int scancode, int action, int mods
+	){
 		if(KeyEventCount < KeyEventStackSize) {
 			KeyEventStack[KeyEventCount].key = key;
 			KeyEventStack[KeyEventCount].scancode = scancode;

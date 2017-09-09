@@ -13,6 +13,7 @@
 #include <other/luts.hpp>
 
 #include <log/log.hpp>
+#include <event/event.hpp>
 
 #define MESH_BUFFER_COUNT 4
 #define MESH_BUFFER_SIZE (64*64*64)/2*6*4;
@@ -29,7 +30,8 @@ namespace TerrainMesher {
 		int indexCount;
 		int chunk;
 
-		int locked; // locked write, means that the buffer has not been uploaded yet
+		int locked; 
+		// locked write, means that the buffer has not been uploaded yet
 	} MeshBuffer;
 
 	typedef struct {
@@ -104,7 +106,9 @@ namespace TerrainMesher {
 		return value;
 	}
 
-	void decodeMaskItem(short value, int*facing, int*inverse, int*color6bit, int*ao){
+	void decodeMaskItem(
+		short value, int*facing, int*inverse, int*color6bit, int*ao
+	){
 		*color6bit = value & 0b00111111;
 		*inverse = (value >> 6) & 1;
 		*facing  = (value >> 7) & 1;
@@ -114,7 +118,12 @@ namespace TerrainMesher {
 		}
 	}
 
-	void mesher(Terrain::Terrain * terrain, int offset[3], int chunkroot, MeshBuffer*mesh){
+	void mesher(
+		Terrain::Terrain * terrain, 
+		int offset[3],
+		int chunkroot, 
+		MeshBuffer*mesh
+	){
 		
 		bool hasBlocks = false;
 		#pragma omp parallel for
@@ -162,21 +171,28 @@ namespace TerrainMesher {
 
 				for (int j = 0; j < 4; ++j){ // Ambient occlusion mess
 					int l[3];
-					for (int s = 0; s < 3; ++s) l[s] = BW[s] + aolut[facing][i][j][0][s];
+					for (int s = 0; s < 3; ++s) 
+						l[s] = BW[s] + aolut[facing][i][j][0][s];
 					int side1  = (Terrain::saferead( l ) > 0);
-					for (int s = 0; s < 3; ++s) l[s] = BW[s] + aolut[facing][i][j][1][s];
+					for (int s = 0; s < 3; ++s) 
+						l[s] = BW[s] + aolut[facing][i][j][1][s];
 					int corner = (Terrain::saferead( l ) > 0);
-					for (int s = 0; s < 3; ++s) l[s] = BW[s] + aolut[facing][i][j][2][s];
+					for (int s = 0; s < 3; ++s) 
+						l[s] = BW[s] + aolut[facing][i][j][2][s];
 					int side2  = (Terrain::saferead( l ) > 0);
 					computedAO[j] = vertexAO( side1>0, side2>0, corner>0 );
 				}
 				int inverse = 0;
-				if( computedAO[1] + computedAO[3] < computedAO[0] + computedAO[2] ) 
+				if( computedAO[1]+computedAO[3] < computedAO[0]+computedAO[2] ) 
 					inverse = 1;
 
 				// Push result into a mask for greedy meshing
-				int maskIndex = getSliceIndex(chunkroot, i, AC[i]) + itemIndex(chunkroot, i, AC);
-				mesh->maskBuffer[maskIndex] = encodeMaskItem(facing, inverse, color6bit, computedAO);
+				int maskIndex = getSliceIndex(
+					chunkroot, i, AC[i]) + itemIndex(chunkroot, i, AC
+				);
+				mesh->maskBuffer[maskIndex] = encodeMaskItem(
+					facing, inverse, color6bit, computedAO
+				);
 			}
 		}
 
@@ -215,7 +231,11 @@ namespace TerrainMesher {
 					mesh->maskBuffer[ sliceIndex+itemIndex+sizeU ] = 0;
 					sizeU++;
 					if( v + sizeU >= chunkroot ) break;
-					if( mesh->maskBuffer[ sliceIndex+itemIndex+sizeU ] != itemData ) break;
+
+					if( mesh->maskBuffer[ 
+						sliceIndex + itemIndex + sizeU 
+						] != itemData 
+					) break;
 				}
 
 				int sizeV = 0;
@@ -227,13 +247,19 @@ namespace TerrainMesher {
 					bool expandable = true;
 
 					for (int i = 0; i < sizeU; ++i) {
-						if( mesh->maskBuffer[ sliceIndex+itemIndex + chunkroot*sizeV + i ] == itemData ) continue;
+						if( mesh->maskBuffer[ 
+							sliceIndex+itemIndex + chunkroot*sizeV + i 
+							] == itemData 
+						) continue;
 						expandable = false;
 						break;
 					}
 
 					if(expandable)
-						for (int i = 0; i < sizeU; ++i) mesh->maskBuffer[ sliceIndex+itemIndex + chunkroot*sizeV + i ] = 0;
+						for (int i = 0; i < sizeU; ++i) 
+							mesh->maskBuffer[ 
+								sliceIndex+itemIndex + chunkroot*sizeV + i 
+							] = 0;
 					else 
 						break;
 				}
@@ -278,12 +304,19 @@ namespace TerrainMesher {
 
 				for (int j = 0; j < 4; ++j)
 				for (int k = 0; k < 3; ++k){
-					mesh->vertexBuffer[vertexIndex]  = vertices[side][j*3+k] * scale[k] + BW[k];
+					mesh->vertexBuffer[vertexIndex] = 
+						vertices[side][j*3+k] * scale[k] + BW[k];
+
 					mesh->colorBuffer[vertexIndex++] =
-						rgb[k] * ( 0.8 + pow( (float)ao[j] / 3.0, 2) * 0.2) * colors[side][j*3+k];
+						rgb[k] * ( 
+							0.8 + pow( (float)ao[j] / 3.0, 2) * 0.2
+						) * colors[side][j*3+k];
 				}
 				
-				for (int i = 0; i < 6; ++i) mesh->indexBuffer[indexIndex++] = indices[inverse][i] + vertexCount;
+				for (int i = 0; i < 6; ++i) 
+					mesh->indexBuffer[indexIndex++] = 
+						indices[inverse][i] + vertexCount;
+
 				vertexCount+=4;
 			}
 		}
@@ -330,16 +363,22 @@ namespace TerrainMesher {
 		int bsize = MESH_BUFFER_SIZE;
 
 
-		snprintf( txtbfr, sizeof(txtbfr), "MESHERTHREAD :: Attemtping to allocate %i MB...", ((bsize*sizeof(float))*3 + (chunks.root * (chunks.root*chunks.root) * sizeof(short)))*MESH_BUFFER_COUNT / 1024 / 1024 );
+		snprintf( txtbfr, sizeof(txtbfr), 
+			"MESHERTHREAD :: Attemtping to allocate %i MB...", 
+			(	(bsize*sizeof(float)) *3 + 
+				(chunks.root * (chunks.root*chunks.root) * sizeof(short))
+			)*MESH_BUFFER_COUNT / 1024 / 1024 );
 
 		Logger::log(txtbfr);
 
 		for (int j = 0; j < MESH_BUFFER_COUNT; ++j) {
-			mesh[j].vertexBuffer = (float*)		malloc(bsize*sizeof(float));
-			mesh[j].colorBuffer  = (float*)		malloc(bsize*sizeof(float));
-			mesh[j].indexBuffer  = (unsigned int*)	malloc(bsize*sizeof(int)*1.5);
+			mesh[j].vertexBuffer = (float*)		  malloc(bsize*sizeof(float));
+			mesh[j].colorBuffer  = (float*)		  malloc(bsize*sizeof(float));
+			mesh[j].indexBuffer  = (unsigned int*)malloc(bsize*sizeof(int)*1.5);
 
-			int maskBufferSize = 3 * chunks.root * (chunks.root*chunks.root) * sizeof(short);
+			int maskBufferSize = 
+				3 * chunks.root * (chunks.root*chunks.root) * sizeof(short);
+
 			mesh[j].maskBuffer   = (short*)		calloc( maskBufferSize, 1 );
 
 			assert( mesh[j].vertexBuffer != NULL );
@@ -404,31 +443,45 @@ namespace TerrainMesher {
 			if(j > chunks.count){ j = 0; xsleep(20); }
 		
 		}
+		Logger::log( "MESHERTHREAD :: Shutting down.." );
 		return NULL;
 	}
-
 
 	int activityTimeMS = 0;
 
 
+	void closeThread(void*n){
+		threadState = COMMAND_KILL;
+		pthread_join(thread, NULL);
+		Logger::log("MESHER :: Thread closed");
+	}
+
+
 	void init(int terrainroot[3], int chunkroot){
-		chunks.count = (terrainroot[0]/chunkroot) * (terrainroot[1]/chunkroot) * (terrainroot[2]/chunkroot);
+		chunks.count = 
+			(terrainroot[0]/chunkroot) * 
+			(terrainroot[1]/chunkroot) * 
+			(terrainroot[2]/chunkroot);
+
 		chunks.root = chunkroot;
 
 		char txtbfr[128];
 
 
 
-		snprintf( txtbfr, sizeof(txtbfr), "MESHER :: Allocating %i chunk objects, %i B  ...", chunks.count, chunks.count*sizeof(int)*8);
+		snprintf( txtbfr, sizeof(txtbfr), 
+			"MESHER :: Allocating %i chunk objects, %i B  ...", 
+			chunks.count, chunks.count*sizeof(int)*8
+		);
 		Logger::log(txtbfr);
-		chunks.x =				(int*)			malloc(sizeof(int) * chunks.count );
-		chunks.y =				(int*)			malloc(sizeof(int) * chunks.count );
-		chunks.z =				(int*)			malloc(sizeof(int) * chunks.count );
-		chunks.vertexBuffer =	(unsigned int*)	malloc(sizeof(int) * chunks.count );
-		chunks.indexBuffer =	(unsigned int*)	malloc(sizeof(int) * chunks.count );
-		chunks.colorBuffer =	(unsigned int*)	malloc(sizeof(int) * chunks.count );
-		chunks.items =			(unsigned int*)	malloc(sizeof(int) * chunks.count );
-		chunks.state =			(int*)			malloc(sizeof(int) * chunks.count );
+		chunks.x			=(int*)		    malloc(sizeof(int)*chunks.count);
+		chunks.y			=(int*)		    malloc(sizeof(int)*chunks.count);
+		chunks.z			=(int*)		    malloc(sizeof(int)*chunks.count);
+		chunks.vertexBuffer	=(unsigned int*)malloc(sizeof(int)*chunks.count);
+		chunks.indexBuffer	=(unsigned int*)malloc(sizeof(int)*chunks.count);
+		chunks.colorBuffer	=(unsigned int*)malloc(sizeof(int)*chunks.count);
+		chunks.items		=(unsigned int*)malloc(sizeof(int)*chunks.count);
+		chunks.state		=(int*)		    malloc(sizeof(int)*chunks.count);
 
 		// 0 - unintialized
 		// 1 - done
@@ -454,7 +507,9 @@ namespace TerrainMesher {
 		}
 
 		pthread_create( &thread, NULL, &threadMain, NULL);
-		Logger::log("MESHER :: Mesher thread started!\n");
+		Logger::log("MESHER :: Mesher thread started!");
+
+		EventSystem::bind( EventSystem::EVENT_SHUTDOWN, *closeThread );
 	}
 
 	void markDirtySingle(int l[]){
