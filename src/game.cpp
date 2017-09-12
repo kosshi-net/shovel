@@ -294,6 +294,7 @@ int main(void) {
 	Logger::log("MAIN :: Shutting down..");
 	EventSystem::fire( EventSystem::EVENT_SHUTDOWN, NULL );
 	glfwTerminate();
+	Logger::log("MAIN :: Goodbye!");
 	return 0;
 }
 

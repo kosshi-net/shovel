@@ -4,6 +4,7 @@ BIN= bin/
 BUILD= build/
 CC= g++
 CFLAGS= \
+	-ggdb \
 	-O3 -ftree-vectorize -msse3 -m32 -Wall \
 	-static -fopenmp -static-libgcc -static-libstdc++ -std=c++11
 
@@ -31,19 +32,19 @@ LIB = \
 	$(FT)lib/libfreetype.a
 
 OBJECTS = \
-$(SRC)game.o \
-$(BUILD)renderer.o \
-$(SRC)input/input.o \
-$(SRC)terrain/terrain.o \
-$(SRC)mesher/terrainmesher.o \
-$(SRC)log/log.o \
-$(SRC)entity/entity.o \
-$(SRC)entity/entityfactory.o \
-$(SRC)system/localcontrol.o \
-$(SRC)system/physics.o \
-$(SRC)system/camera.o \
-$(SRC)other/util.o \
-$(SRC)event/event.o \
+	$(SRC)game.o \
+	$(BUILD)renderer.o \
+	$(SRC)input/input.o \
+	$(SRC)terrain/terrain.o \
+	$(SRC)mesher/terrainmesher.o \
+	$(SRC)log/log.o \
+	$(SRC)entity/entity.o \
+	$(SRC)entity/entityfactory.o \
+	$(SRC)system/localcontrol.o \
+	$(SRC)system/physics.o \
+	$(SRC)system/camera.o \
+	$(SRC)other/util.o \
+	$(SRC)event/event.o \
 
 
 $(BIN)game: $(OBJECTS)
