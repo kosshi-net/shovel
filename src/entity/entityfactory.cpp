@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <entity/entity.hpp>
-#include <log/log.hpp>
+#include <core/log.hpp>
 using namespace ECS;
 
 namespace EntityFactory {
@@ -21,11 +21,13 @@ namespace EntityFactory {
 					| COMPONENT_VELOCITY
 					| COMPONENT_AIRDRAG
 					| COMPONENT_CAMERA
-					| COMPONENT_LOCALCONTROL
+					| COMPONENT_INPUT_LOCAL
+					| COMPONENT_CONTROL_MODEL_BASIC
+					| COMPONENT_DEBUG
 				);
 
-				e->speed = 1.0f;
-				e->acceleration = 1.0f;
+				e->speed = 0.0f;
+				e->acceleration = 0.2f;
 				e->drag = 0.9f;
 				e->location[0] = 32;
 				e->location[1] = 128;

@@ -263,7 +263,6 @@ namespace Renderer {
 		glEnableVertexAttribArray(shader_aVertex);
 		glEnableVertexAttribArray(shader_aColor);
 
-
 		int count = 0;
 		for (int i = 0; i < chunks->count; i++) {
 			count++;

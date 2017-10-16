@@ -5,11 +5,12 @@
 #include <ctime>
 #include <assert.h>
 
-// Third
+
 #include <glm/gtc/noise.hpp>
 #include <glm/vec3.hpp>
 
-#include <log/log.hpp>
+#include <core/memory.hpp>
+#include <core/log.hpp>
 
 
 #define FEAT_SIZE 0.01
@@ -191,7 +192,7 @@ namespace Terrain {
 
 		Logger::log(txtbfr);
 
-		terrain.vxl = (char*)malloc(
+		terrain.vxl = (char*)w_malloc(
 			terrain.root[0]*terrain.root[1]*terrain.root[2]*sizeof(char)
 		);
 

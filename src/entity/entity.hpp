@@ -13,8 +13,10 @@ namespace ECS
 		COMPONENT_AIRDRAG				= 1 << 2,
 
 		COMPONENT_CAMERA				= 1 << 3,
-		COMPONENT_LOCALCONTROL			= 1 << 4,
+		COMPONENT_INPUT_LOCAL			= 1 << 4,
+		COMPONENT_CONTROL_MODEL_BASIC	= 1 << 5,
 
+		COMPONENT_DEBUG					= 1 << 6,
 		// COMPONENT_GRAVITY
 		// COMPONENT_VOXELGRID				= 1 << 2,
 		// COMPONENT_VOXELMESH				= 1 << 3,
@@ -23,20 +25,20 @@ namespace ECS
 		// COMPONENT_CULLER					= 1 << 8,
 		// COMPONENT_GUID					= 1 << 9,
 
-		COMPONENT_PLACEHOLDER 			= 1 << 31,
 	} Component;
+
 
 	typedef struct {
 		int mask; // Componentmask
+		int cmd;
+		int last_cmd;
 		unsigned long GUID;
 		float location[3];
 		float velocity[3];
-		float speed;
-		float acceleration;
 		float drag;
-		float yaw;
-		float pitch;
-		float roll;
+		float acceleration;
+		float speed;
+		float yaw, pitch, roll;
 		float rotation[3];
 	} Entity;
 

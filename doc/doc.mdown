@@ -87,6 +87,71 @@ State must be set to the provided buffer type.
 
 
 ### ENTITY SYSTEM
+Components
+	COMPONENT_NONE				
+	COMPONENT_LOCATION			
+	COMPONENT_VELOCITY			
+	COMPONENT_AIRDRAG			
+	COMPONENT_CAMERA	
+	COMPONENT_CAMERA_GENERIC_MOUSE_CONTROL
+	COMPONENT_INPUT_LOCAL
+	COMPONENT_CONTROL_MODEL_BASIC
+	COMPONENT_DEBUG_WORLD_EDITING
+
+Current systems
+	CameraSystem 
+		- Executed every frame
+		- Handles rendering
+	LocalInputSystem	
+		- Executed every frame
+		- Adds keyboard/mouse input to cmd and yaw/pitch
+	PhysicsSystem
+		- Executed in a fixed time interval, 30hz for example
+		- Moves player
+
+Systems
+	Camera
+		Executed: Every frame
+		This system handles rendering
+	Physics
+		Executed: Every tick
+		This system decides how player moves
+	
+
+
+
+### Game pseudocode
+
+Main {
+	Draw splash
+	Initialize systems
+	Loop {
+		Camera controls
+		Render
+		Draw debug text
+		TICK 30HZ {
+			Player controls
+			Physics
+		}
+		Debug keys
+	}
+}
+
+
+
+
+Theory
+
+Physics and game logic are run at a certain time interval, tick.
+Almost nothing is decoupled from that, only cameras direction by
+mouse movement and renderin in general. Renderer does interpolate
+players location.
+
+
+
+	
+
+
 
 
 
@@ -298,3 +363,21 @@ alloc( void* block, size ) {
 	
 
 }
+
+
+<!--  -->
+
+
+Map 1024x128x1024
+
+
+
+
+
+
+
+
+
+
+
+

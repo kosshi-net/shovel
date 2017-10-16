@@ -37,14 +37,16 @@ OBJECTS = \
 	$(SRC)input/input.o \
 	$(SRC)terrain/terrain.o \
 	$(SRC)mesher/terrainmesher.o \
-	$(SRC)log/log.o \
 	$(SRC)entity/entity.o \
 	$(SRC)entity/entityfactory.o \
-	$(SRC)system/localcontrol.o \
+	$(SRC)system/localinput.o \
 	$(SRC)system/physics.o \
 	$(SRC)system/camera.o \
-	$(SRC)other/util.o \
+	$(SRC)system/debug.o \
 	$(SRC)event/event.o \
+	$(SRC)core/memory.o \
+	$(SRC)core/util.o \
+	$(SRC)core/log.o \
 
 
 $(BIN)game: $(OBJECTS)

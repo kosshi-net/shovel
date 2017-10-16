@@ -5,7 +5,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <other/util.hpp>
+#include <core/util.hpp>
 
 #include <ctime>
 

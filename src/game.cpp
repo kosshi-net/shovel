@@ -19,23 +19,24 @@
 #include <input/input.hpp>
 #include <terrain/terrain.hpp>
 #include <mesher/terrainmesher.hpp>
-#include <log/log.hpp>
+#include <core/log.hpp>
 
 #include <event/event.hpp>
 
 #include <entity/entity.hpp>
 #include <entity/entityfactory.hpp>
 
-#include <system/localcontrol.hpp>
+#include <system/localinput.hpp>
 #include <system/physics.hpp>
 #include <system/camera.hpp>
+#include <system/debug.hpp>
 
-#include <other/defineterrain.hpp>
+#include <core/defineterrain.hpp>
 
 
 #define SHOVEL_VERSION "DEV-0.0.19"
 
-#define TICK CLOCKS_PER_SEC/60
+#define TICK (CLOCKS_PER_SEC/30)
 #define SKIP TICK*10
 
 int main(void) {
@@ -109,7 +110,8 @@ int main(void) {
 		Renderer::getWindowSize(&width, &height);
 
 		clock_t now = clock();
-		CameraSystem::draw( (now - physTime) / (float)TICK );
+		float lerp = (float)(now - physTime) / (float)TICK;
+		CameraSystem::draw( lerp );
 
 		// DEBUG
 		if(drawText){ 
@@ -146,16 +148,16 @@ int main(void) {
 			Renderer::drawText( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			snprintf(txtbfr, sizeof(txtbfr), 
-				"Lerp: %f", 
-				(now - physTime) / (float)TICK
-			);
+			snprintf(txtbfr, sizeof(txtbfr), "Lerp: %f, rate %lihz", 
+				lerp, CLOCKS_PER_SEC/TICK );
 
 			Renderer::drawText( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 		}
 
-
+		if(cursorLocked)
+			LocalInputSystem::mouse();
+		
 		if( now - physTime > TICK ) {
 			if( now - physTime > SKIP ){
 				snprintf(txtbfr, sizeof(txtbfr), 
@@ -167,8 +169,9 @@ int main(void) {
 			} else {
 				physTime += TICK;
 			}
-			LocalControlSystem::run(cursorLocked);
+			LocalInputSystem::tick();
 			PhysicsSystem::run();
+			DebugSystem::run();
 		}
 
 		double cx, cy;

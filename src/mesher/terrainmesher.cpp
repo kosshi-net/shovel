@@ -7,12 +7,12 @@
 #include <pthread.h>
 #include <algorithm>
 
-#include <other/xsleep.hpp>
+#include <core/xsleep.hpp>
 #include <terrain/terrain.hpp>
 
-#include <other/luts.hpp>
+#include <core/luts.hpp>
 
-#include <log/log.hpp>
+#include <core/log.hpp>
 #include <event/event.hpp>
 
 #define MESH_BUFFER_COUNT 4
@@ -33,6 +33,8 @@ namespace TerrainMesher {
 		int locked; 
 		// locked write, means that the buffer has not been uploaded yet
 	} MeshBuffer;
+	// Meshbuffer is the object where the mesh is written. Temporary store
+	// until uploaded to gpu. 
 
 	typedef struct {
 		int count;
@@ -402,7 +404,7 @@ namespace TerrainMesher {
 			MeshBuffer*m = getMesh( 0 );
 
 			if(m == NULL) {
-				Logger::warn("SLEEP");
+				Logger::warn("MESHER :: THREAD :: Buffer full, sleeping...");
 				xsleep(10);
 				continue;
 			}
@@ -440,7 +442,10 @@ namespace TerrainMesher {
 			i++;
 			
 
-			if(j > chunks.count){ j = 0; xsleep(20); }
+			if(j > chunks.count){ 
+				j = 0;
+				xsleep(20); 
+			}
 		
 		}
 		Logger::log( "MESHERTHREAD :: Shutting down.." );
