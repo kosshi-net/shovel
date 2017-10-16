@@ -34,6 +34,7 @@ LIB = \
 OBJECTS = \
 	$(SRC)game.o \
 	$(BUILD)renderer.o \
+	$(SRC)renderer/culler.o \
 	$(SRC)input/input.o \
 	$(SRC)terrain/terrain.o \
 	$(SRC)mesher/terrainmesher.o \

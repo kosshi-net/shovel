@@ -25,6 +25,7 @@
 #define PI 3.14159265
 
 #include <renderer/textrenderer.hpp>
+#include <renderer/culler.hpp>
 
 // kosshis renderer
 namespace Renderer {
@@ -110,6 +111,8 @@ namespace Renderer {
 	const unsigned char* getRenderer() { return renderer; } ;
 	const unsigned char* getVersion() { return version; };
 
+	float* planes;
+
 	int init(){
 		if (!glfwInit())
 			return -1;
@@ -140,6 +143,8 @@ namespace Renderer {
 			MessageBox(0, "GLEW failed!", "Error!", 0);
 			return -1;
 		}
+
+		planes = Culler::createPlaneBuffer();
 
 
 		if(!initTextRenderer()) return -1;
@@ -245,6 +250,7 @@ namespace Renderer {
 		}
 	}
 
+
 	void draw(glm::mat4 modelview, glm::mat4 projection){
 		glUseProgram(shader);
 		glEnableVertexAttribArray(shader_aVertex);
@@ -263,10 +269,26 @@ namespace Renderer {
 		glEnableVertexAttribArray(shader_aVertex);
 		glEnableVertexAttribArray(shader_aColor);
 
+		glm::mat4 mvp = projection*modelview;
+
+		Culler::extractPlanes( &mvp[0][0], planes );
+		
 		int count = 0;
 		for (int i = 0; i < TerrainMesher::getChunkCount(); i++) {
 			count++;
 			if ( chunks[i].items > 0 ) {
+
+				float floc[] = {
+					(float)chunks[i].loc[0]*64,
+					(float)chunks[i].loc[1]*64,
+					(float)chunks[i].loc[2]*64
+				};
+
+				if( 
+					!Culler::frustumcull( planes, floc, 64*1.7320508075688772 )
+					// Magic number in there is lenght of vector {1,1,1}
+				) continue;
+				
 
 				glBindBuffer(GL_ARRAY_BUFFER, chunks[i].colorBuffer );
 
@@ -286,6 +308,7 @@ namespace Renderer {
 				);	
 			}
 		}
+
 
 
 		glDisableVertexAttribArray(shader_aVertex);
