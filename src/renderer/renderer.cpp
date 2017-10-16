@@ -199,18 +199,18 @@ namespace Renderer {
 			// printf("[MeshTick] Mesh done, uploading!\n");
 
 			int i = mesh->chunk;
-			TerrainMesher::ChunkList* chunks = TerrainMesher::getChunks();
+			TerrainMesher::ChunkD* chunks = TerrainMesher::getChunks();
 
 			// Check if buffers have ever been generated, if no, gen!
-			if( chunks->state[i] & 0b10 ){
-				glGenBuffers(1, &chunks->vertexBuffer[i] );
-				glGenBuffers(1, &chunks->indexBuffer [i] );
-				glGenBuffers(1, &chunks->colorBuffer [i] );
+			if( chunks[i].state & 0b10 ){
+				glGenBuffers(1, &chunks[i].vertexBuffer );
+				glGenBuffers(1, &chunks[i].indexBuffer  );
+				glGenBuffers(1, &chunks[i].colorBuffer  );
 			}
 			
-			chunks->state[i] = chunks->state[i] & 0b1;	
+			chunks[i].state = chunks[i].state & 0b1;	
 
-			glBindBuffer(GL_ARRAY_BUFFER, chunks->vertexBuffer[i]);
+			glBindBuffer(GL_ARRAY_BUFFER, chunks[i].vertexBuffer);
 			int size = mesh->vertexCount * sizeof(float);
 			glBufferData(
 				GL_ARRAY_BUFFER, 
@@ -219,7 +219,7 @@ namespace Renderer {
 				GL_STATIC_DRAW
 			);
 
-			glBindBuffer(GL_ARRAY_BUFFER, chunks->colorBuffer[i]);
+			glBindBuffer(GL_ARRAY_BUFFER, chunks[i].colorBuffer);
 			size = mesh->vertexCount * sizeof(float);
 			glBufferData(
 				GL_ARRAY_BUFFER, 
@@ -227,7 +227,7 @@ namespace Renderer {
 				mesh->colorBuffer, 
 				GL_STATIC_DRAW);
 
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks->indexBuffer[i]);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks[i].indexBuffer);
 			size = mesh->indexCount * sizeof(int);
 			glBufferData(
 				GL_ELEMENT_ARRAY_BUFFER, 
@@ -236,7 +236,7 @@ namespace Renderer {
 				GL_STATIC_DRAW
 			);
 
-			chunks->items[i] = mesh->indexCount;
+			chunks[i].items = mesh->indexCount;
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,	0);
 			glBindBuffer(GL_ARRAY_BUFFER, 			0);
@@ -258,31 +258,31 @@ namespace Renderer {
 
 		meshTick();
 
-		TerrainMesher::ChunkList* chunks = TerrainMesher::getChunks();
+		TerrainMesher::ChunkD* chunks = TerrainMesher::getChunks();
 
 		glEnableVertexAttribArray(shader_aVertex);
 		glEnableVertexAttribArray(shader_aColor);
 
 		int count = 0;
-		for (int i = 0; i < chunks->count; i++) {
+		for (int i = 0; i < TerrainMesher::getChunkCount(); i++) {
 			count++;
-			if ( chunks->items[i] > 0 ) {
+			if ( chunks[i].items > 0 ) {
 
-				glBindBuffer(GL_ARRAY_BUFFER, chunks->colorBuffer[i] );
+				glBindBuffer(GL_ARRAY_BUFFER, chunks[i].colorBuffer );
 
 				glVertexAttribPointer(
 					shader_aColor, 3, GL_FLOAT, GL_FALSE, 0, NULL
 				);
 
-				glBindBuffer(GL_ARRAY_BUFFER, chunks->vertexBuffer[i]);
+				glBindBuffer(GL_ARRAY_BUFFER, chunks[i].vertexBuffer);
 				glVertexAttribPointer(
 					shader_aVertex, 3, GL_FLOAT, GL_FALSE, 0, NULL
 				);
 
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks->indexBuffer [i]);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunks[i].indexBuffer);
 
 				glDrawElements(
-					GL_TRIANGLES, chunks->items[i], GL_UNSIGNED_INT, 0
+					GL_TRIANGLES, chunks[i].items, GL_UNSIGNED_INT, 0
 				);	
 			}
 		}

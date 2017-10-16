@@ -20,19 +20,16 @@ namespace TerrainMesher {
 
 
 	typedef struct {
-		int count;
-		int root;
-		int * x;
-		int * y;
-		int * z;
-		unsigned int * vertexBuffer;
-		unsigned int * indexBuffer;
-		unsigned int * colorBuffer;
-		int * state;
-		unsigned int * items;
-	} ChunkList;
+		int loc[3];
+		unsigned int vertexBuffer;
+		unsigned int indexBuffer;
+		unsigned int colorBuffer;
+		int state;
+		unsigned int items;
+	} ChunkD;
 
-	ChunkList * getChunks();
+	ChunkD * getChunks();
+	int getChunkCount();
 
 	void init(int[], int);
 	MeshBuffer* getMesh(int);

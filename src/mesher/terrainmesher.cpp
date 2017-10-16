@@ -37,17 +37,19 @@ namespace TerrainMesher {
 	// until uploaded to gpu. 
 
 	typedef struct {
-		int count;
-		int root;
-		int * x; int * y; int * z;
-		unsigned int * vertexBuffer;
-		unsigned int * indexBuffer;
-		unsigned int * colorBuffer;
-		int * state;
-		unsigned int * items;
-	} ChunkList;
+		int loc[3];
+		unsigned int vertexBuffer;
+		unsigned int indexBuffer;
+		unsigned int colorBuffer;
+		int state;
+		unsigned int items;
+	} ChunkD;
 
-	ChunkList chunks;
+
+	ChunkD * chunks;
+	int chunkCount = 0;
+	int chunkroot = 0;
+
 
 	enum ThreadState {
 		START,
@@ -63,9 +65,12 @@ namespace TerrainMesher {
 
 	ThreadState threadState = START;
 
-	ChunkList * getChunks(){
-		return &chunks;
+	ChunkD * getChunks(){
+		return chunks;
 	};
+	int getChunkCount(){
+		return chunkCount;
+	}
 
 
 	void rgb8bit ( float * rgb, char n ) {
@@ -368,7 +373,8 @@ namespace TerrainMesher {
 		snprintf( txtbfr, sizeof(txtbfr), 
 			"MESHERTHREAD :: Attemtping to allocate %i MB...", 
 			(	(bsize*sizeof(float)) *3 + 
-				(chunks.root * (chunks.root*chunks.root) * sizeof(short))
+				(chunkroot * (chunkroot*chunkroot)
+				* sizeof(short))
 			)*MESH_BUFFER_COUNT / 1024 / 1024 );
 
 		Logger::log(txtbfr);
@@ -379,7 +385,7 @@ namespace TerrainMesher {
 			mesh[j].indexBuffer  = (unsigned int*)malloc(bsize*sizeof(int)*1.5);
 
 			int maskBufferSize = 
-				3 * chunks.root * (chunks.root*chunks.root) * sizeof(short);
+				3 * chunkroot * (chunkroot*chunkroot) * sizeof(short);
 
 			mesh[j].maskBuffer   = (short*)		calloc( maskBufferSize, 1 );
 
@@ -420,18 +426,17 @@ namespace TerrainMesher {
 
 			}
 
-			if( i == chunks.count) i = 0;
+			if( i == chunkCount) i = 0;
 
-			if(chunks.state[i] & 0b1) {
+			if(chunks[i].state & 0b1) {
 				clock_t start = clock();
 				m->chunk = i;
-				int l[] = {
-					chunks.x[i]*chunks.root,
-					chunks.y[i]*chunks.root,
-					chunks.z[i]*chunks.root
-				};
-				chunks.state[i] = chunks.state[i] ^ 0b1;
-				mesher( Terrain::getTerrain(), l, chunks.root, m);
+				int l[3];
+				for (int j = 0; j < 3; ++j)
+					l[j] = chunks[i].loc[j]*chunkroot;
+
+				chunks[i].state = chunks[i].state ^ 0b1;
+				mesher( Terrain::getTerrain(), l, chunkroot, m);
 				count++;
 				lockMesh(m);
 				clock_t end = clock();
@@ -442,7 +447,7 @@ namespace TerrainMesher {
 			i++;
 			
 
-			if(j > chunks.count){ 
+			if(j > chunkCount){ 
 				j = 0;
 				xsleep(20); 
 			}
@@ -462,13 +467,14 @@ namespace TerrainMesher {
 	}
 
 
-	void init(int terrainroot[3], int chunkroot){
-		chunks.count = 
+	void init(int terrainroot[3], int _chunkroot){
+		chunkroot = _chunkroot;
+		
+		chunkCount = 
 			(terrainroot[0]/chunkroot) * 
 			(terrainroot[1]/chunkroot) * 
 			(terrainroot[2]/chunkroot);
 
-		chunks.root = chunkroot;
 
 		char txtbfr[128];
 
@@ -476,17 +482,11 @@ namespace TerrainMesher {
 
 		snprintf( txtbfr, sizeof(txtbfr), 
 			"MESHER :: Allocating %i chunk objects, %i B  ...", 
-			chunks.count, chunks.count*sizeof(int)*8
+			chunkCount, chunkCount*sizeof(int)*8
 		);
 		Logger::log(txtbfr);
-		chunks.x			=(int*)		    malloc(sizeof(int)*chunks.count);
-		chunks.y			=(int*)		    malloc(sizeof(int)*chunks.count);
-		chunks.z			=(int*)		    malloc(sizeof(int)*chunks.count);
-		chunks.vertexBuffer	=(unsigned int*)malloc(sizeof(int)*chunks.count);
-		chunks.indexBuffer	=(unsigned int*)malloc(sizeof(int)*chunks.count);
-		chunks.colorBuffer	=(unsigned int*)malloc(sizeof(int)*chunks.count);
-		chunks.items		=(unsigned int*)malloc(sizeof(int)*chunks.count);
-		chunks.state		=(int*)		    malloc(sizeof(int)*chunks.count);
+
+		chunks = (ChunkD*)calloc( sizeof(ChunkD)*chunkCount, 1 );
 
 		// 0 - unintialized
 		// 1 - done
@@ -501,12 +501,12 @@ namespace TerrainMesher {
 		for (int y = 0; y < terrainroot[1]/chunkroot; ++y)
 		for (int z = 0; z < terrainroot[2]/chunkroot; ++z)
 		{
-			chunks.x[i]=x;
-			chunks.y[i]=y;
-			chunks.z[i]=z;
+			chunks[i].loc[0]=x;
+			chunks[i].loc[1]=y;
+			chunks[i].loc[2]=z;
 
-			chunks.state[i] = 0b11;
-			chunks.items[i] = 0;
+			chunks[i].state = 0b11;
+			chunks[i].items = 0;
 
 			i++;
 		}
@@ -520,15 +520,15 @@ namespace TerrainMesher {
 	void markDirtySingle(int l[]){
 		int cl[3];
 
-		for (int i = 0; i < 3; ++i) cl[i] = l[i]/chunks.root;
+		for (int i = 0; i < 3; ++i) cl[i] = l[i]/chunkroot;
 
-		for (int i = 0; i < chunks.count; ++i) {
+		for (int i = 0; i < chunkCount; ++i) {
 			if(
-				cl[0] == chunks.x[i] &&
-				cl[1] == chunks.y[i] &&
-				cl[2] == chunks.z[i]
+				cl[0] == chunks[i].loc[0] &&
+				cl[1] == chunks[i].loc[1] &&
+				cl[2] == chunks[i].loc[2]
 			){	
-				chunks.state[i] = chunks.state[i] | 0b1;
+				chunks[i].state = chunks[i].state | 0b1;
 				// printf("Marked %i as dirty\n", i);
 				return;
 			}

@@ -40,7 +40,7 @@ namespace EntityFactory {
 
 
 				e->yaw = 0;
-				e->pitch = 90;
+				e->pitch = 0;
 
 				return true;
 			}
