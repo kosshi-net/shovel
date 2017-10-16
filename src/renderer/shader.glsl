@@ -18,7 +18,7 @@
 
 
 		float dist = length( uMV * vec4( aVertex, 1.0) );
-		float vFogFactor = 1.0 - pow( clamp( (dist) / 1024.0, 0.0, 1.0), 1.1);
+		float vFogFactor = 1.0 - pow( clamp( (dist) / 350.0, 0.0, 1.0), 1.1);
 
 		vColor = mix(uFogColor, aColor, vFogFactor);
 		

@@ -371,7 +371,7 @@ namespace TerrainMesher {
 
 
 		snprintf( txtbfr, sizeof(txtbfr), 
-			"MESHERTHREAD :: Attemtping to allocate %i MB...", 
+			"MESHER :: THREAD :: Allocating %i MB...", 
 			(	(bsize*sizeof(float)) *3 + 
 				(chunkroot * (chunkroot*chunkroot)
 				* sizeof(short))
@@ -398,7 +398,7 @@ namespace TerrainMesher {
 
 		}
 
-		Logger::log("MESHERTHREAD :: Done allocating!");
+		Logger::log("MESHER :: THREAD :: Done allocating!");
 
 		clock_t lastClock = clock();
 		clock_t activeTime = 0;
@@ -468,8 +468,9 @@ namespace TerrainMesher {
 
 
 	void init(int terrainroot[3], int _chunkroot){
+		Logger::log("MESHER :: Initializing...");
 		chunkroot = _chunkroot;
-		
+
 		chunkCount = 
 			(terrainroot[0]/chunkroot) * 
 			(terrainroot[1]/chunkroot) * 
@@ -515,6 +516,7 @@ namespace TerrainMesher {
 		Logger::log("MESHER :: Mesher thread started!");
 
 		EventSystem::bind( EventSystem::EVENT_SHUTDOWN, *closeThread );
+		Logger::log("MESHER :: Initialized!");
 	}
 
 	void markDirtySingle(int l[]){

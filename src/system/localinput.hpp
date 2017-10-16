@@ -12,7 +12,7 @@ namespace LocalInputSystem {
 	void clearCommands(  ECS::Entity * e );
 
 	void tick();
-	void mouse();
+	void mouse(bool);
 }
 
 #endif

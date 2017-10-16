@@ -56,7 +56,7 @@ int main(void) {
 	float sx = 2.0 / width;
 	float sy = 2.0 / height;
 
-	Renderer::setFogColor(0.7, 0.7, 0.9, 1.0);
+	Renderer::setFogColor(1.0, 1.0, 1.0, 1.0);
 
 	Renderer::startFrame();
 	Renderer::drawText( "Please wait, loading... ", 
@@ -72,10 +72,7 @@ int main(void) {
 
 	int TERRAIN_SIZE[] = {TERRAIN_SIZE_X, TERRAIN_SIZE_Y, TERRAIN_SIZE_Z};
 
-	Logger::log("MAIN :: Initializing Terrain...");
 	Terrain::init( TERRAIN_SIZE );
-
-	Logger::log("MAIN :: Initializing TerrainMesher...");
 	TerrainMesher::init(TERRAIN_SIZE, CHUNK_ROOT);
 
 	
@@ -150,13 +147,16 @@ int main(void) {
 
 			snprintf(txtbfr, sizeof(txtbfr), "Lerp: %f, rate %lihz", 
 				lerp, CLOCKS_PER_SEC/TICK );
+			Renderer::drawText( txtbfr, 
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
+			snprintf(txtbfr, sizeof(txtbfr), "Draw calls: %i", 
+				Renderer::getDebugInfo()->drawCalls );
 			Renderer::drawText( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 		}
 
-		if(cursorLocked)
-			LocalInputSystem::mouse();
+		LocalInputSystem::mouse(cursorLocked);
 		
 		if( now - physTime > TICK ) {
 			if( now - physTime > SKIP ){
@@ -180,47 +180,6 @@ int main(void) {
 			cx = width*0.5;
 			cy = height*0.5;
 		}
-		/*
-		if(input::getMouseButton(1)){
-			
-
-			glm::vec3 vec = Renderer::screenToWorldSpaceVector(
-				cx, width, cy, height, projectionRotation);
-
-			int hitloc[3]={0};
-			int normal[3]={0};
-			char block = 0;
-			float dist = 2000.0;
-
-			bool hit = Terrain::raycast(
-				&vec[0], &camera.loc[0],
-				&dist, hitloc, normal, &block
-			);
-
-			if(hit) {
-				// if(Terrain::saferead(hitloc)){
-					// Terrain::write(hitloc, 0);
-					// TerrainMesher::markDirty(hitloc);
-				// }
-				for (int x = -3; x < 3; ++x)
-				for (int y = -3; y < 3; ++y)
-				for (int z = -3; z < 3; ++z)
-				{	
-					int ll[] ={
-						hitloc[0]+x,
-						hitloc[1]+y,
-						hitloc[2]+z
-					};
-					if(Terrain::saferead(ll)){
-						Terrain::write(ll, 0);
-						TerrainMesher::markDirty(ll);
-					}
-				}
-
-			}
-		}
-		*/
-
 
 		static int kec = 0;
 		kec = input::getKeyEventCount();
@@ -261,32 +220,7 @@ int main(void) {
 						input::lockCursor();
 						cursorLocked = true;
 					} 
-					/*
-					else {
-
-						glm::vec3 vec = 
-						Renderer::screenToWorldSpaceVector(
-							cx, width, cy, height, projectionRotation);
-
-						int hitloc[3]={0}; int normal[3]={0};
-						char block = 0;  float dist = 2000.0;
-
-						bool hit = Terrain::raycast(
-							&vec[0], &camera.loc[0],
-							&dist, hitloc, normal, &block
-						);
-
-						if(hit && Terrain::saferead(hitloc)){
-							Terrain::write(hitloc, 0);
-							TerrainMesher::markDirty(hitloc);
-						}
-						break;
-					}
-						*/
-
 			}
-			
-		
 		}
 		input::resetMouseEventCount();
 

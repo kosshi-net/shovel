@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <algorithm>
+#include <core/log.hpp>
 
 namespace Renderer {
 
@@ -64,7 +65,7 @@ namespace Renderer {
 	float* geometryBuffer;
 
 	int initTextRenderer(){
-
+		Logger::log("TEXTRENDERER :: Initializing FreeType...");
 		if(FT_Init_FreeType(&ft)) {
 			fprintf(stderr, "Could not init freetype library\n");
 			MessageBox(0, "FreeType failed to initialize.", "Error!", 0);
@@ -97,6 +98,7 @@ namespace Renderer {
         // (face->glyph->bitmap_left, face->glyph->bitmap_top)
         // face->glyph->advance.x
 
+		Logger::log("TEXTRENDERER :: Generating character atlas image...");
 
 		int total_x = 0;
 		int max_y = 0;
@@ -186,6 +188,7 @@ namespace Renderer {
 		glVertexAttribPointer(textShader_aCoord, 4, GL_FLOAT, GL_FALSE, 0, 0);
 		glDisableVertexAttribArray(textShader_aCoord);
 
+		Logger::log("TEXTRENDERER :: Initialized");
 		return 1;
 	}
 

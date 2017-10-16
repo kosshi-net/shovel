@@ -179,6 +179,8 @@ namespace Terrain {
 	}
 
 	void init(int root[3]){
+
+		Logger::log("TERRAIN :: Initializing...");
 		for (int i = 0; i < 3; ++i) terrain.root[i] = root[i];
 		int size = terrain.root[0]*terrain.root[1]*terrain.root[2];
 
@@ -199,5 +201,6 @@ namespace Terrain {
 		for (int i = 0; i < 3; ++i) terrain.offset[i] = 0;
 
 		generateTerrain();
+		Logger::log("TERRAIN :: Initialized!");
 	}
 }

@@ -35,8 +35,8 @@ namespace DebugSystem {
 
 			// Logger::log("log");
 
-			if( !hasCommand( e, CMD_ATTACK ) && 
-				 hadCommand( e, CMD_ATTACK )
+			if(  hasCommand( e, CMD_ATTACK ) && 
+				!hadCommand( e, CMD_ATTACK )
 			){
 				int width, height;
 				Renderer::getWindowSize(&width, &height);

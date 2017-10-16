@@ -24,11 +24,23 @@
 
 #define PI 3.14159265
 
+#define MSAA_SAMPLES 2
+
 #include <renderer/textrenderer.hpp>
 #include <renderer/culler.hpp>
 
 // kosshis renderer
 namespace Renderer {
+
+	typedef struct {
+		int chunksTotal;
+		int chunksRendered;
+		int drawCalls;
+	} DebugInfo;
+	DebugInfo debugInfo;
+	DebugInfo* getDebugInfo(){
+		return &debugInfo;
+	}
 
 	GLuint createShader(const char vertSrc[], const char fragSrc[]){
 
@@ -114,6 +126,7 @@ namespace Renderer {
 	float* planes;
 
 	int init(){
+		Logger::log("RENDERER :: Initializing...");
 		if (!glfwInit())
 			return -1;
 
@@ -123,7 +136,11 @@ namespace Renderer {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 		// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_SAMPLES, MSAA_SAMPLES);
+
+		char bfr[128];
+		sprintf(bfr, "RENDERER :: Using %ix MSAA", MSAA_SAMPLES);
+		Logger::log(bfr);
 
 		int width = 640, height = 480;
 		window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
@@ -147,6 +164,7 @@ namespace Renderer {
 		planes = Culler::createPlaneBuffer();
 
 
+		
 		if(!initTextRenderer()) return -1;
 
 
@@ -163,6 +181,8 @@ namespace Renderer {
 
 
 		// SHADER
+
+		Logger::log("RENDERER :: Building shaders...");
 		shader = createShader( chunkVertSrc, chunkFragSrc );
 		glUseProgram(shader);
 		shader_aVertex = 		glGetAttribLocation (shader, "aVertex");
@@ -171,6 +191,7 @@ namespace Renderer {
 		shader_uMV =     		glGetUniformLocation(shader, "uMV");
 		shader_uFogColor =      glGetUniformLocation(shader, "uFogColor");
 
+		Logger::log("RENDERER :: Initialized!");
 
 		return 0;
 	}
@@ -273,6 +294,10 @@ namespace Renderer {
 
 		Culler::extractPlanes( &mvp[0][0], planes );
 		
+		debugInfo.drawCalls = 0;
+		debugInfo.chunksTotal = 0;
+		debugInfo.chunksRendered = 0;
+
 		int count = 0;
 		for (int i = 0; i < TerrainMesher::getChunkCount(); i++) {
 			count++;
@@ -288,6 +313,8 @@ namespace Renderer {
 					!Culler::frustumcull( planes, floc, 64*1.7320508075688772 )
 					// Magic number in there is lenght of vector {1,1,1}
 				) continue;
+				debugInfo.drawCalls++;
+				debugInfo.chunksRendered++;
 				
 
 				glBindBuffer(GL_ARRAY_BUFFER, chunks[i].colorBuffer );

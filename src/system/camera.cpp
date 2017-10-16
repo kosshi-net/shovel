@@ -37,7 +37,7 @@ namespace CameraSystem {
 		// DEFINE CAMERA
 		glm::mat4 projection;
 		float ratio = (float)width /(float)height;
-		projection = glm::perspective(90.0f, ratio, 0.01f, 1000.0f);
+		projection = glm::perspective(90.0f, ratio, 0.01f, 350.0f);
 
 		glm::mat4 projectionRotation = glm::perspective(
 			90.0f, ratio, 0.01f, 1000.0f

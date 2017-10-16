@@ -48,9 +48,9 @@ namespace Logger {
 
 		logBuffer = (char*)malloc(256*256*sizeof(char));
 
-		log("Logger initialized, testing...");
-		error("LOGGER :: ERROR :: TESTING");
-		warn("LOGGER :: WARN :: TESTING");
+		log("LOGGER :: Initialized");
+		// error("LOGGER :: ERROR :: TESTING");
+		// warn("LOGGER :: WARN :: TESTING");
 
 		initialized = true;
 

@@ -63,10 +63,12 @@ namespace LocalInputSystem {
 		}
 
 	}
-	void mouse(){
+	void mouse(bool cursorlocked){
 		glfwPollEvents();
 		double rx, ry;
 		input::getCursorMovement(&rx, &ry);
+
+		if(!cursorlocked) return;
 
 		int count = entityCount();
 		for (int i = 0; i < count; ++i) {

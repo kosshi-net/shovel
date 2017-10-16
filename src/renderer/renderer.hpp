@@ -20,6 +20,13 @@ namespace Renderer {
 
 	void startFrame(void);
 
+	typedef struct {
+		int chunksTotal;
+		int chunksRendered;
+		int drawCalls;
+	} DebugInfo;
+	DebugInfo* getDebugInfo();
+
 	void draw( glm::mat4, glm::mat4 );
 
 	void swapBuffers(void);

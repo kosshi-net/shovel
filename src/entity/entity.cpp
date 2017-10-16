@@ -57,10 +57,10 @@ namespace ECS
 	unsigned long GUID_counter = 0;
 
 	int init(){
-		Logger::log("ENTITYSYS :: INIT");
+		Logger::log("ENTITYSYS :: Initializing...");
 		Entities = (Entity*) calloc( MAX_ENTITY_COUNT, sizeof(Entity) );
 		assert( Entities != NULL );
-		Logger::log("ENTITYSYS :: FINISHED");
+		Logger::log("ENTITYSYS :: Initialized!");
 
 		return 1;
 	}	
