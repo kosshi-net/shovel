@@ -24,6 +24,7 @@ namespace EntityFactory {
 					| COMPONENT_INPUT_LOCAL
 					| COMPONENT_CONTROL_MODEL_BASIC
 					| COMPONENT_DEBUG
+					| COMPONENT_DEBUG_COLLISION
 				);
 
 				e->speed = 0.0f;
@@ -32,6 +33,14 @@ namespace EntityFactory {
 				e->location[0] = 32;
 				e->location[1] = 128;
 				e->location[2] = 32;
+
+				e->min[0] = -0.4f;
+				e->min[1] = -0.4f;
+				e->min[2] = -0.4f;
+
+				e->max[0] =  0.4f;
+				e->max[1] =  0.4f;
+				e->max[2] =  0.4f;
 
 
 				e->velocity[0] = 0;

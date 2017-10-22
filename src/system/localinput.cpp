@@ -51,6 +51,9 @@ namespace LocalInputSystem {
 			if (input::getKey(KEY_D)) 
 				addCommand( e, CMD_MOVE_RIGHT );
 
+			if (input::getKey(KEY_SPACE)) 
+				addCommand( e, CMD_MOVE_UP );
+
 
 
 

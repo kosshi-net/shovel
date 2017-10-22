@@ -44,6 +44,7 @@ OBJECTS = \
 	$(SRC)system/physics.o \
 	$(SRC)system/camera.o \
 	$(SRC)system/debug.o \
+	$(SRC)physics/saabb.o \
 	$(SRC)event/event.o \
 	$(SRC)core/memory.o \
 	$(SRC)core/util.o \

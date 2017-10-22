@@ -34,7 +34,7 @@
 #include <core/defineterrain.hpp>
 
 
-#define SHOVEL_VERSION "DEV-0.0.19"
+#define SHOVEL_VERSION "d0.0.27"
 
 #define TICK (CLOCKS_PER_SEC/30)
 #define SKIP TICK*10
@@ -154,6 +154,19 @@ int main(void) {
 				Renderer::getDebugInfo()->drawCalls );
 			Renderer::drawText( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
+
+			ECS::Entity *e = ECS::getEntityByLocation(0);
+
+			snprintf(txtbfr, sizeof(txtbfr), "min: %f %f %f max: %f %f %f", 
+				e->location[0]+e->min[0],
+				e->location[1]+e->min[1],
+				e->location[2]+e->min[2],
+				e->location[0]+e->max[0],
+				e->location[1]+e->max[1],
+				e->location[2]+e->max[2]
+			 );
+			Renderer::drawText( txtbfr, 
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 		}
 
 		LocalInputSystem::mouse(cursorLocked);
@@ -169,7 +182,7 @@ int main(void) {
 			} else {
 				physTime += TICK;
 			}
-			LocalInputSystem::tick();
+			if(cursorLocked) LocalInputSystem::tick();
 			PhysicsSystem::run();
 			DebugSystem::run();
 		}

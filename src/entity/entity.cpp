@@ -24,8 +24,9 @@ namespace ECS
 		COMPONENT_CAMERA				= 1 << 3,
 		COMPONENT_INPUT_LOCAL			= 1 << 4,
 		COMPONENT_CONTROL_MODEL_BASIC	= 1 << 5,
-
-		COMPONENT_DEBUG					= 1 << 6,
+		
+		COMPONENT_DEBUG_COLLISION		= 1 << 6,
+		COMPONENT_DEBUG					= 1 << 7,
 
 		// COMPONENT_GRAVITY
 		// COMPONENT_VOXELGRID				= 1 << 2,
@@ -45,7 +46,10 @@ namespace ECS
 		int last_cmd;
 		unsigned long GUID;
 		float location[3];
+		float last_location[3];
 		float velocity[3];
+		float min[3];
+		float max[3];
 		float drag;
 		float acceleration;
 		float speed;

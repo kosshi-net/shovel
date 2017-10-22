@@ -1,5 +1,6 @@
 #include <limits>
 #include <algorithm>
+#include <core/log.hpp>
 
 namespace Physics {
 
@@ -9,7 +10,8 @@ namespace Physics {
 		const float a_vel[3], 
 		const float b_min[3], 
 		const float b_max[3], 
-		const float b_vel[3]
+		const float b_vel[3],
+		int  	   coldata[3]
 	){
 
 		float invEntry[3];
@@ -50,6 +52,10 @@ namespace Physics {
 		if(exitTime < entryTime || entryTime > 1 || entryTime < 0){
 			return 1;
 		}
+
+		for (int i = 0; i < 3; ++i)
+			coldata[i] = (entry[i] == entryTime) * (relVel[i] > 0 ? 1 : -1);
+
 		return entryTime;
 	}
 

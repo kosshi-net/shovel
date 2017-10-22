@@ -7,8 +7,9 @@ typedef enum {
 	CMD_MOVE_LEFT		= 1 << 1,
 	CMD_MOVE_BACKWARD	= 1 << 2,
 	CMD_MOVE_RIGHT		= 1 << 3,
-	CMD_ATTACK 			= 1 << 4,
-	CMD_ATTACK2			= 1 << 5,
+	CMD_MOVE_UP			= 1 << 4,
+	CMD_ATTACK 			= 1 << 5,
+	CMD_ATTACK2			= 1 << 6,
 
 } Command;
 
