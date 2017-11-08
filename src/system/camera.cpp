@@ -20,6 +20,14 @@ using namespace ECS;
 
 namespace CameraSystem {
 
+	glm::vec3 getLerpLocation(Entity*e, float lerp) {
+		return glm::mix( 
+			glm::make_vec3(e->last_location),
+			glm::make_vec3(e->location), 
+			lerp 
+		);
+	}
+
 	void draw( float lerp = 0 ){
 		
 		int width, height;
@@ -74,30 +82,37 @@ namespace CameraSystem {
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
-		glm::vec3 location = glm::make_vec3(c->location);
+		glm::vec3 location = getLerpLocation( c, lerp );
 
-		glm::vec3 last_location = glm::make_vec3(c->last_location);
-		glm::vec3 min = glm::make_vec3(c->min);
-
-		if(ENABLE_LERP) location = glm::mix( last_location, location, lerp );
-
-			// location + velocity * lerp;
 
 		view = glm::translate	(view, -location);
 
 		// DRAW TERRAIN
 		graphics::voxel::draw(view, projection);
 
-		// glm::mat4 mvp = projection*view;
-		view = glm::translate	(view, location+min);
 
-
-
-		view = glm::scale( view,  glm::vec3(0.8, 0.8, 0.8));
-
-		graphics::box::draw_wireframe_cube(view, projection);
+		// view = glm::translate	(view, location);
+		// view = glm::scale( view,  glm::vec3(0.8, 0.8, 0.8));
 
 		// LOOP ENTITIES AND SEARCH FOR AABB GEOMETRY
+		Entity*e = NULL;
+		for (int i = 0; i < count; ++i){
+			e = getEntityByLocation(i);
+
+			glm::mat4 view2 = view;
+
+			if( !hasComponents(e, COMPONENT_AABB_GEOMETRY) ) continue;
+
+			glm::vec3 loc = getLerpLocation( e, lerp );
+			glm::vec3 min = glm::make_vec3(e->min);
+			glm::vec3 max = glm::make_vec3(e->max);
+			
+			view2 = glm::translate	(view2, loc+min);
+			view2 = glm::scale( view2, -min+max );
+
+			graphics::box::draw_wireframe_cube(view2, projection);
+
+		}
 
 	}
 

@@ -68,6 +68,7 @@ int main(void) {
 	ECS::init();
 
 	EntityFactory::createPlayer();
+	EntityFactory::createDebugCube();
 
 	int TERRAIN_SIZE[] = {TERRAIN_SIZE_X, TERRAIN_SIZE_Y, TERRAIN_SIZE_Z};
 

@@ -41,6 +41,7 @@ namespace PhysicsSystem {
 				  COMPONENT_VELOCITY 
 				| COMPONENT_LOCATION
 				| COMPONENT_DEBUG_COLLISION 
+				| COMPONENT_DEBUG_COLLISION 
 			)) {
 				for (int i = 0; i < 3; ++i)
 					e->last_location[i] = e->location[i];
@@ -107,8 +108,7 @@ namespace PhysicsSystem {
 						
 						if(result < time_min) {
 							time_min = result;
-							for (int i = 0; i < 3; ++i)
-								colnorm[i] = _colnorm[i];
+							for(int i=0;i<3;++i) colnorm[i] = _colnorm[i];
 						}
 						
 					}
@@ -116,7 +116,11 @@ namespace PhysicsSystem {
 					for (int i = 0; i < 3; ++i) {
 						// e->location[i] += e->velocity[i]*(time_min);
 						if( colnorm[i]!=0 ){
-							e->location[i] += e->velocity[i]*(time_min-0.02);
+							float change = e->velocity[i]*(time_min-0.00001);
+
+							// if(std::abs(change) > 0.00001) 
+							e->velocity[i]+=change;
+
 							e->velocity[i] = 0;
 						}else{
 							e->location[i] += e->velocity[i]*(time_min);

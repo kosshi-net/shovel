@@ -5,6 +5,7 @@
 namespace EntityFactory
 {
 	bool createPlayer();
+	bool createDebugCube();
 }
 
 #endif
