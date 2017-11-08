@@ -6,7 +6,8 @@ CC= g++
 CFLAGS= \
 	-ggdb \
 	-O3 -ftree-vectorize -msse3 -m32 -Wall \
-	-static -fopenmp -static-libgcc -static-libstdc++ -std=c++11
+	-static -fopenmp -static-libgcc -static-libstdc++ -std=c++11 \
+	-Wl,-subsystem,windows
 
 #-Wl,-subsystem,windows -fopt-info-vec-missed 
 EXT = lib/
@@ -33,8 +34,10 @@ LIB = \
 
 OBJECTS = \
 	$(SRC)game.o \
-	$(BUILD)renderer.o \
-	$(SRC)renderer/culler.o \
+	$(BUILD)core.o \
+	$(SRC)graphics/voxel.o \
+	$(SRC)graphics/cull.o \
+	$(SRC)graphics/text.o \
 	$(SRC)input/input.o \
 	$(SRC)terrain/terrain.o \
 	$(SRC)mesher/terrainmesher.o \
@@ -55,8 +58,8 @@ $(BIN)game: $(OBJECTS)
 	@echo Linking $@
 	@$(CC) $^ $(LIB) -lglfw3 -lgdi32 -lopengl32 $(CFLAGS) -o $(BIN)game.exe 
 
-$(BUILD)renderer.o: \
-$(SRC)renderer/renderer.cpp $(BUILD)res.h $(SRC)renderer/textrenderer.hpp
+$(BUILD)core.o: \
+$(SRC)graphics/core.cpp $(BUILD)res.h
 	@echo Building $@
 	@$(CC) -c $< $(INC) $(CFLAGS) -o $@
 
@@ -64,7 +67,7 @@ $(SRC)%.o : $(SRC)%.cpp
 	@echo Building $@
 	@$(CC) -c $< $(INC) $(CFLAGS) -o $@
 
-$(BUILD)res.h: $(SRC)renderer/shader.glsl
+$(BUILD)res.h: $(SRC)graphics/shader.glsl
 	@node scripts/res.js
 
 run: bin/game

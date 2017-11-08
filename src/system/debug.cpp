@@ -6,7 +6,7 @@
 
 #include <system/commands.hpp>
 
-#include <renderer/renderer.hpp>
+#include <graphics/core.hpp>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -39,7 +39,7 @@ namespace DebugSystem {
 				!hadCommand( e, CMD_ATTACK )
 			){
 				int width, height;
-				Renderer::getWindowSize(&width, &height);
+				graphics::getWindowSize(&width, &height);
 				float ratio = (float)width / (float)height;
 
 				glm::mat4 projectionRotation = glm::perspective(
@@ -56,7 +56,7 @@ namespace DebugSystem {
 					glm::vec3(0.0f, 1.0f, 0.0f)
 				);
 
-				glm::vec3 vec = Renderer::screenToWorldSpaceVector(
+				glm::vec3 vec = graphics::screenToWorldSpaceVector(
 					1, 2, 1, 2, projectionRotation);
 
 				int hitloc[3]={0}; int normal[3]={0};

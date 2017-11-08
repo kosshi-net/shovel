@@ -1,11 +1,14 @@
 #include <entity/entity.hpp>
-#include <renderer/renderer.hpp>
+
+#include <graphics/core.hpp>
+#include <graphics/voxel.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <core/util.hpp>
+#include <core/log.hpp>
 
 #include <ctime>
 
@@ -19,20 +22,25 @@ namespace CameraSystem {
 		
 		int width, height;
 		int count = entityCount();
-		Entity*e = NULL;
+		Entity*c = NULL;
+		// Search for entity with camera, break when found
+		// Cameraentity will be "c"
 		for (int i = 0; i < count; ++i){
-			e = getEntityByLocation(i);
-			if( hasComponents(e, 
-					  COMPONENT_CAMERA
-					| COMPONENT_LOCATION
-				) 
-			) break;
+			c = getEntityByLocation(i);
+			if( hasComponents(c, 
+				COMPONENT_CAMERA |
+				COMPONENT_LOCATION
+			)) break;
 		}
-		if(e==NULL) return;
+		if(c==NULL) {
+			Logger::error(
+				"CAMERASYSTEM :: Unable to find entity with camera component");
+			return;
+		}
 
-		Renderer::startFrame();
+		graphics::startFrame();
 
-		Renderer::getWindowSize(&width, &height);
+		graphics::getWindowSize(&width, &height);
 
 		// DEFINE CAMERA
 		glm::mat4 projection;
@@ -44,31 +52,31 @@ namespace CameraSystem {
 		);
 
 		projectionRotation = glm::rotate(
-			projectionRotation, degToRad( e->pitch ),
+			projectionRotation, degToRad( c->pitch ),
 			 glm::vec3(1.0f, 0.0f, 0.0f)
 		);
 
 		projectionRotation = glm::rotate(
-			projectionRotation, degToRad( -e->yaw ), 
+			projectionRotation, degToRad( -c->yaw ), 
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
 		glm::mat4 view = glm::mat4();
 		view = glm::rotate(
-			view, degToRad(  e->pitch ), 
+			view, degToRad(  c->pitch ), 
 			glm::vec3(1.0f, 0.0f, 0.0f)
 		);
 
 		view = glm::rotate(
-			view, degToRad( -e->yaw   ), 
+			view, degToRad( -c->yaw   ), 
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
 		glm::vec3 location = glm::vec3(
-			e->location[0], e->location[1], e->location[2]
+			c->location[0], c->location[1], c->location[2]
 		);
 		glm::vec3 last_location = glm::vec3(
-			e->last_location[0], e->last_location[1], e->last_location[2]
+			c->last_location[0], c->last_location[1], c->last_location[2]
 		);
 
 		if(ENABLE_LERP) location = glm::mix( last_location, location, lerp );
@@ -77,8 +85,10 @@ namespace CameraSystem {
 
 		view = glm::translate	(view, -location);
 
-		// DRAW
-		Renderer::draw(view, projection);
+		// DRAW TERRAIN
+		graphics::voxel::draw(view, projection);
+
+		// LOOP ENTITIES AND SEARCH FOR AABB GEOMETRY
 
 	}
 

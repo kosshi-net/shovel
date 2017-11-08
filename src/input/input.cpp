@@ -1,11 +1,7 @@
 #include <stdio.h>
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#define GLFW_STATIC
-#include <GLFW\glfw3.h>
-
-#include <renderer/renderer.hpp>
+#include <graphics/driver.h>
+#include <graphics/core.hpp>
 
 #define MouseEventStackSize 128
 #define KeyEventStackSize 128

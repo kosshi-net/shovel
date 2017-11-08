@@ -3,7 +3,7 @@ console.log('Generating resource file...');
 const fs = require('fs');
 const cs = new (require('./commentstripper.js'))();
 
-var shaderfile = fs.readFileSync('src/renderer/shader.glsl', 'utf8');
+var shaderfile = fs.readFileSync('src/graphics/shader.glsl', 'utf8');
 
 // var imagefile = new Uint8Array(fs.readFileSync('../res/gee.png'));
 

@@ -291,10 +291,18 @@
 			}
 		},
 		{
+			"file": "src/core/xsleep.hpp",
+			"settings":
+			{
+				"buffer_size": 439,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "src/entity/entity.cpp",
 			"settings":
 			{
-				"buffer_size": 1925,
+				"buffer_size": 1951,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -303,7 +311,7 @@
 			"file": "src/entity/entity.hpp",
 			"settings":
 			{
-				"buffer_size": 1300,
+				"buffer_size": 1326,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -312,7 +320,7 @@
 			"file": "src/system/commands.hpp",
 			"settings":
 			{
-				"buffer_size": 266,
+				"buffer_size": 291,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -329,7 +337,7 @@
 			"file": "src/game.cpp",
 			"settings":
 			{
-				"buffer_size": 5303,
+				"buffer_size": 5646,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -347,7 +355,7 @@
 			"file": "src/system/camera.cpp",
 			"settings":
 			{
-				"buffer_size": 1659,
+				"buffer_size": 1729,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -365,8 +373,19 @@
 			"file": "Makefile",
 			"settings":
 			{
-				"buffer_size": 1605,
+				"buffer_size": 1631,
 				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "<!DOCTYPE html>\n<html>\n<head>\n\t<title>Kosshi's homepage | Kosshi.fi</title>\n\t<meta charset=\"utf-8\">\n\t<meta name=\"description\" content=\"Homepage of kosshi\">\n\t<meta name=\"viewport\" content=\"initial-scale=1, maximum-scale=1\">\n\n\t<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"./layout.css\">\n\t<link rel=\"icon\" href=\"./favicon.png?v=2\" />\n\t<!-- <script src=\"/cookienotice.js\"></script> -->\n</head>\n<body>\n\t<div class=\"wrapper\">\n\t\t<header>Kosshi.fi</header>\n\t\t<nav>\n\t\t\t<ul>\n\t\t\t\t<li>\n\t\t\t\t\t<a href=\"/\">Home</a>\n\t\t\t\t</li>\n\n\t\t\t\t<li>\n\t\t\t\t\t<a href=\"contact.html\">Contact</a>\n\t\t\t\t</li>\n\t\t\t\t\n\t\t\t\t<li class=\"login\">\n\t\t\t\t\t<a href=\"login.html\">Login</a>\n\t\t\t\t</li>\n\n\t\t\t</ul>\n\t\t</nav>\n\t\t<div id=\"main_content\">\n\t\t\t<article>\n\t\t\t\t<div class=\"content\">\n\t\t\t\t<div class=\"date\">1.10.2017</div>\n\t\t\t\t<h1>What is this?</h1>\n\t\t\t\t<p>A server for server stuff. Always under construction.</p>\n\t\t\t\t<br>\n\t\t\t\t<h1>That Minecraft clone?</h1>\n\t\t\t\t<p>\n\t\t\t\t\tStill available <a href=\"/experiments/webshovel\">here</a>,\n\t\t\t\t\tbut it is no longer under development, moved to C++.\n\n\t\t\t\t\tYou can download a very early dev build as a win32 exe here.\n\t\t\t\t\tIf it doesn't run, inform me thru the contact tab =)\n\t\t\t\t</p>\n\n\t\t\t\t<img src=\"/images/wip1.gif\">\n\t\t\t\t<img src=\"/images/wip2.gif\">\n\t\t\t\t<img src=\"/images/wip3.gif\">\n\t\t\t\t<img src=\"/images/wip4.gif\">\n\t\t\t\t</div>\n\t\t\t</article>\n\t\t</div>\n\t</div>\n</body>\n</html>\n",
+			"file": "/C/Users/kosshi/AppData/Local/Temp/fz3temp-2/index.html",
+			"file_size": 1382,
+			"file_write_time": 131531804553580709,
+			"settings":
+			{
+				"buffer_size": 1452,
 				"line_ending": "Windows"
 			}
 		},
@@ -383,7 +402,7 @@
 			"file": "src/system/physics.cpp",
 			"settings":
 			{
-				"buffer_size": 3467,
+				"buffer_size": 4148,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -393,6 +412,15 @@
 			"settings":
 			{
 				"buffer_size": 1388,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/tests/aabbtest.cpp",
+			"settings":
+			{
+				"buffer_size": 649,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -463,7 +491,7 @@
 			"file": "src/system/localinput.cpp",
 			"settings":
 			{
-				"buffer_size": 1550,
+				"buffer_size": 1619,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -487,14 +515,30 @@
 			}
 		}
 	],
-	"build_system": "",
+	"build_system": "Packages/Makefile/Make.sublime-build",
 	"build_system_choices":
 	[
+		[
+			[
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				]
+			],
+			[
+				"Packages/Makefile/Make.sublime-build",
+				""
+			]
+		]
 	],
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 92.0,
+		"height": 354.0,
 		"last_filter": "",
 		"selected_items":
 		[
@@ -555,13 +599,15 @@
 				"HTML: Encode Special Characters"
 			]
 		],
-		"width": 382.0
+		"width": 464.0
 	},
 	"console":
 	{
-		"height": 0.0,
+		"height": 176.0,
 		"history":
 		[
+			"cd ..",
+			"dir"
 		]
 	},
 	"distraction_free":
@@ -589,6 +635,7 @@
 	],
 	"file_history":
 	[
+		"/C/Users/kosshi/Desktop/twitter.js",
 		"/C/Users/kosshi/Documents/server/www/deep/shakespear.txt",
 		"/C/Users/kosshi/Documents/server/www/deep/trainer7.js",
 		"/C/Users/kosshi/Documents/server/www/deep/RESULTS.txt",
@@ -715,12 +762,11 @@
 		"/C/Users/kosshi/Documents/cpp/shovel-latest/scripts/Consolas.ttf",
 		"/C/Users/kosshi/Documents/Release/INSTALL_INSTRUCTIONS.txt",
 		"/C/Users/kosshi/Documents/server/www/experiments/bbray/js/main.js",
-		"/C/Users/kosshi/Documents/server/www/experiments/bbray/js/entity.js",
-		"/C/ext/qdbmp_1.0.0/qdbmp.h"
+		"/C/Users/kosshi/Documents/server/www/experiments/bbray/js/entity.js"
 	],
 	"find":
 	{
-		"height": 70.0
+		"height": 28.0
 	},
 	"find_in_files":
 	{
@@ -734,6 +780,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"win32",
 			"read",
 			"samples",
 			"calls",
@@ -859,7 +906,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -875,8 +922,8 @@
 						"selection":
 						[
 							[
-								1141,
-								1141
+								438,
+								438
 							]
 						],
 						"settings":
@@ -885,10 +932,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1003.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 24,
+					"stack_index": 18,
 					"type": "text"
 				},
 				{
@@ -916,7 +963,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 19,
 					"type": "text"
 				},
 				{
@@ -942,85 +989,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4413.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 15,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "src/entity/entity.cpp",
-					"semi_transient": false,
+					"file": "src/core/xsleep.hpp",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 1925,
+						"buffer_size": 439,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1085,
-								1085
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 252.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/entity/entity.hpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1300,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								979,
-								729
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 252.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 12,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/system/commands.hpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 266,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								233,
-								233
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1031,11 +1020,97 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 23,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/entity/entity.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1951,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1457,
+								1476
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/entity/entity.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1326,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								841,
+								841
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 127.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 17,
 					"type": "text"
 				},
 				{
 					"buffer": 6,
+					"file": "src/system/commands.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 291,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								269,
+								269
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
 					"file": "src/input/input.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1057,33 +1132,33 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1070.0,
+						"translation.y": 1283.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 22,
+					"stack_index": 27,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 6,
+			"selected": 0,
 			"sheets":
 			[
 				{
-					"buffer": 7,
+					"buffer": 8,
 					"file": "src/game.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5303,
+						"buffer_size": 5646,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3960,
-								3960
+								968,
+								975
 							]
 						],
 						"settings":
@@ -1092,14 +1167,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1295.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 9,
 					"file": "src/terrain/terrain.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1121,27 +1196,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 152.0,
+						"translation.y": 398.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 10,
 					"file": "src/system/camera.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1659,
+						"buffer_size": 1729,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								218,
-								222
+								1596,
+								1596
 							]
 						],
 						"settings":
@@ -1150,14 +1225,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 594.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 15,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 11,
 					"file": "src/renderer/shader.glsl",
 					"semi_transient": false,
 					"settings":
@@ -1182,24 +1257,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 20,
+					"stack_index": 25,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 12,
 					"file": "Makefile",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1605,
+						"buffer_size": 1631,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								947,
-								947
+								185,
+								185
 							]
 						],
 						"settings":
@@ -1207,14 +1282,43 @@
 							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 126.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 14,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 13,
+					"file": "/C/Users/kosshi/AppData/Local/Temp/fz3temp-2/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1452,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1193,
+								1193
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
 					"file": "src/renderer/renderer.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1236,27 +1340,27 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 126.0,
+						"translation.y": 150.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 16,
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 15,
 					"file": "src/system/physics.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3467,
+						"buffer_size": 4148,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								859,
-								859
+								2925,
+								2925
 							]
 						],
 						"settings":
@@ -1265,14 +1369,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 157.0,
+						"translation.y": 1304.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 14,
+					"buffer": 16,
 					"file": "src/physics/saabb.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1284,8 +1388,8 @@
 						"selection":
 						[
 							[
-								1360,
-								1360
+								718,
+								718
 							]
 						],
 						"settings":
@@ -1294,14 +1398,43 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 252.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 15,
+					"buffer": 17,
+					"file": "src/tests/aabbtest.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 649,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								285,
+								285
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 18,
 					"file": "/C/Users/kosshi/Documents/server/www/webshovel/src/client/terraincollider.js",
 					"semi_transient": false,
 					"settings":
@@ -1323,14 +1456,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 336.0,
+						"translation.y": 402.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 16,
+					"buffer": 19,
 					"file": "src/renderer/textrenderer.hpp",
 					"semi_transient": false,
 					"settings":
@@ -1352,14 +1485,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2226.0,
+						"translation.y": 2670.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 20,
 					"type": "text"
 				},
 				{
-					"buffer": 17,
+					"buffer": 20,
 					"file": "src/renderer/renderer.hpp",
 					"semi_transient": false,
 					"settings":
@@ -1384,11 +1517,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 21,
 					"type": "text"
 				},
 				{
-					"buffer": 18,
+					"buffer": 21,
 					"file": "src/renderer/culler.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1413,11 +1546,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 21,
+					"stack_index": 26,
 					"type": "text"
 				},
 				{
-					"buffer": 19,
+					"buffer": 22,
 					"file": "src/system/debug.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1439,14 +1572,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 294.0,
+						"translation.y": 349.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 13,
 					"type": "text"
 				},
 				{
-					"buffer": 20,
+					"buffer": 23,
 					"file": "src/entity/entityfactory.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1468,14 +1601,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 210.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 14,
 					"type": "text"
 				},
 				{
-					"buffer": 21,
+					"buffer": 24,
 					"file": "src/system/debug.hpp",
 					"semi_transient": false,
 					"settings":
@@ -1500,24 +1633,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 19,
+					"stack_index": 24,
 					"type": "text"
 				},
 				{
-					"buffer": 22,
+					"buffer": 25,
 					"file": "src/system/localinput.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1550,
+						"buffer_size": 1619,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1299,
-								1299
+								1068,
+								1068
 							]
 						],
 						"settings":
@@ -1526,14 +1659,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 513.0,
+						"translation.y": 403.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 17,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 23,
+					"buffer": 26,
 					"file": "src/core/log.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1555,14 +1688,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 210.0,
+						"translation.y": 252.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 16,
+					"stack_index": 22,
 					"type": "text"
 				},
 				{
-					"buffer": 24,
+					"buffer": 27,
 					"file": "src/system/localinput.hpp",
 					"semi_transient": false,
 					"settings":
@@ -1587,7 +1720,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 18,
+					"stack_index": 23,
 					"type": "text"
 				}
 			]
@@ -1595,7 +1728,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 29.0
+		"height": 28.0
 	},
 	"input":
 	{
@@ -1643,11 +1776,11 @@
 	{
 		"height": 120.0
 	},
-	"pinned_build_system": "",
+	"pinned_build_system": "Packages/Makefile/Make.sublime-build",
 	"project": "shovel.sublime-project",
 	"replace":
 	{
-		"height": 114.0
+		"height": 52.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1677,7 +1810,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 1,
+	"selected_group": 0,
 	"settings":
 	{
 	},

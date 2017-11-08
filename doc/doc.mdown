@@ -381,3 +381,27 @@ Map 1024x128x1024
 
 
 
+how the fuck should i structure the renderer?
+
+
+
+renderer
+	text
+	cube
+	voxelmesh
+
+
+
+Renderer core
+
+#include <renderer/core.hpp>
+
+#include <renderer/text.hpp>
+
+#include <renderer/voxelmesh.hpp>
+
+
+renderer::cube::draw()
+
+
+

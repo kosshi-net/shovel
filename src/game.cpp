@@ -10,12 +10,11 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#define GLFW_STATIC
-#include <GLFW\glfw3.h>
+#include <graphics/driver.h>
+#include <graphics/core.hpp>
+#include <graphics/voxel.hpp>
+#include <graphics/text.hpp>
 
-#include <renderer/renderer.hpp>
 #include <input/input.hpp>
 #include <terrain/terrain.hpp>
 #include <mesher/terrainmesher.hpp>
@@ -45,27 +44,27 @@ int main(void) {
 
 
 
-	if(Renderer::init() != 0){
+	if(graphics::init() != 0){
 		Logger::error("MAIN :: ERROR:: Could not init renderer\n");
 		return 1;
 	}
 	int width, height;
-	Renderer::getWindowSize(&width, &height);
+	graphics::getWindowSize(&width, &height);
 
 
 	float sx = 2.0 / width;
 	float sy = 2.0 / height;
 
-	Renderer::setFogColor(1.0, 1.0, 1.0, 1.0);
+	graphics::voxel::setFogColor(1.0, 1.0, 1.0, 1.0);
 
-	Renderer::startFrame();
-	Renderer::drawText( "Please wait, loading... ", 
+	graphics::startFrame();
+	graphics::text::draw( "Please wait, generating terrain... ", 
 		-1 + 8 * sx,   1 - 40 * sy, sx, sy, 20 );
-	Renderer::drawText( "Copyright (c) kosshi.fi, do not distribute ", 
+	graphics::text::draw( "Copyright (c) kosshi.fi, do not reupload and stuff, please", 
 		-1 + 8 * sx,   1 - 20 * sy, sx, sy, 20 );
-	Renderer::swapBuffers();
+	graphics::swapBuffers();
 
-	input::init(Renderer::getWindow());
+	input::init(graphics::getWindow());
 	ECS::init();
 
 	EntityFactory::createPlayer();
@@ -77,7 +76,7 @@ int main(void) {
 
 	
 
-	double lasttime = Renderer::getTime();
+	double lasttime = graphics::getTime();
 	// double lasttick = getTime();
  
 	bool cursorLocked = false;
@@ -88,9 +87,9 @@ int main(void) {
 
 	char title[] = "ShovelEngine";
 	char build[] = SHOVEL_VERSION;
-	Renderer::setWindowTitle(title);
+	graphics::setWindowTitle(title);
 
-	Renderer::setFogColor(0.7, 0.7, 0.9, 1.0);
+	graphics::voxel::setFogColor(0.7, 0.7, 0.9, 1.0);
 
 
 	Logger::log("MAIN :: Startup done!");
@@ -99,12 +98,12 @@ int main(void) {
 
 	static char txtbfr[256];
 
-	while(!Renderer::windowShouldClose()) {
-		double currenttime = Renderer::getTime();
+	while(!graphics::windowShouldClose()) {
+		double currenttime = graphics::getTime();
 		double delta = currenttime-lasttime;
 
 
-		Renderer::getWindowSize(&width, &height);
+		graphics::getWindowSize(&width, &height);
 
 		clock_t now = clock();
 		float lerp = (float)(now - physTime) / (float)TICK;
@@ -123,50 +122,47 @@ int main(void) {
 
 
 			snprintf(txtbfr, sizeof(txtbfr), "%ifps", (int)(1.0/delta));
-			Renderer::drawText( txtbfr,
+			graphics::text::draw( txtbfr,
 				-1 + 8 * sx,   1 - (20*line++) * sy,    sx, sy, 20 );
 
-			Renderer::drawText( (char*)Renderer::getRenderer(),
+			graphics::text::draw( (char*)graphics::getRenderer(),
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			Renderer::drawText( (char*)Renderer::getVersion(),
+			graphics::text::draw( (char*)graphics::getVersion(),
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			Renderer::drawText( build,
-				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
-
-			Renderer::drawText( "Do not distribute",
+			graphics::text::draw( build,
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
 			snprintf(txtbfr, sizeof(txtbfr), "Mshr: %i%%, %i", 
 				(int)(TerrainMesher::getActivity()*100), 
 				TerrainMesher::getCount()
 			);
-			Renderer::drawText( txtbfr, 
+			graphics::text::draw( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			snprintf(txtbfr, sizeof(txtbfr), "Lerp: %f, rate %lihz", 
+			snprintf(txtbfr, sizeof(txtbfr), "Lerp: %f, %ihz", 
 				lerp, CLOCKS_PER_SEC/TICK );
-			Renderer::drawText( txtbfr, 
+			graphics::text::draw( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
 			snprintf(txtbfr, sizeof(txtbfr), "Draw calls: %i", 
-				Renderer::getDebugInfo()->drawCalls );
-			Renderer::drawText( txtbfr, 
+				graphics::getDebugInfo()->drawCalls );
+			graphics::text::draw( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			ECS::Entity *e = ECS::getEntityByLocation(0);
+			// ECS::Entity *e = ECS::getEntityByLocation(0);
 
-			snprintf(txtbfr, sizeof(txtbfr), "min: %f %f %f max: %f %f %f", 
-				e->location[0]+e->min[0],
-				e->location[1]+e->min[1],
-				e->location[2]+e->min[2],
-				e->location[0]+e->max[0],
-				e->location[1]+e->max[1],
-				e->location[2]+e->max[2]
-			 );
-			Renderer::drawText( txtbfr, 
-				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
+			// snprintf(txtbfr, sizeof(txtbfr), "min: %f %f %f max: %f %f %f", 
+			// 	e->location[0]+e->min[0],
+			// 	e->location[1]+e->min[1],
+			// 	e->location[2]+e->min[2],
+			// 	e->location[0]+e->max[0],
+			// 	e->location[1]+e->max[1],
+			// 	e->location[2]+e->max[2]
+			//  );
+			// graphics::text::draw( txtbfr, 
+			// 	-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 		}
 
 		LocalInputSystem::mouse(cursorLocked);
@@ -209,7 +205,7 @@ int main(void) {
 						drawText = !drawText;
 						break;
 					case GLFW_KEY_F2:
-						Renderer::toggleWireframe();
+						graphics::toggleWireframe();
 						break;
 
 				}
@@ -237,7 +233,7 @@ int main(void) {
 		}
 		input::resetMouseEventCount();
 
-		Renderer::swapBuffers();
+		graphics::swapBuffers();
 
 		lasttime = currenttime;
 	}
