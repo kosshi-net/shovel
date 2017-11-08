@@ -2,10 +2,12 @@
 
 #include <graphics/core.hpp>
 #include <graphics/voxel.hpp>
+#include <graphics/box.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <core/util.hpp>
 #include <core/log.hpp>
@@ -72,12 +74,10 @@ namespace CameraSystem {
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
-		glm::vec3 location = glm::vec3(
-			c->location[0], c->location[1], c->location[2]
-		);
-		glm::vec3 last_location = glm::vec3(
-			c->last_location[0], c->last_location[1], c->last_location[2]
-		);
+		glm::vec3 location = glm::make_vec3(c->location);
+
+		glm::vec3 last_location = glm::make_vec3(c->last_location);
+		glm::vec3 min = glm::make_vec3(c->min);
 
 		if(ENABLE_LERP) location = glm::mix( last_location, location, lerp );
 
@@ -87,6 +87,15 @@ namespace CameraSystem {
 
 		// DRAW TERRAIN
 		graphics::voxel::draw(view, projection);
+
+		// glm::mat4 mvp = projection*view;
+		view = glm::translate	(view, location+min);
+
+
+
+		view = glm::scale( view,  glm::vec3(0.8, 0.8, 0.8));
+
+		graphics::box::draw_wireframe_cube(view, projection);
 
 		// LOOP ENTITIES AND SEARCH FOR AABB GEOMETRY
 

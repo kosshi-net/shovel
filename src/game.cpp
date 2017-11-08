@@ -151,18 +151,18 @@ int main(void) {
 			graphics::text::draw( txtbfr, 
 				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 
-			// ECS::Entity *e = ECS::getEntityByLocation(0);
+			ECS::Entity *e = ECS::getEntityByLocation(0);
 
-			// snprintf(txtbfr, sizeof(txtbfr), "min: %f %f %f max: %f %f %f", 
-			// 	e->location[0]+e->min[0],
-			// 	e->location[1]+e->min[1],
-			// 	e->location[2]+e->min[2],
-			// 	e->location[0]+e->max[0],
-			// 	e->location[1]+e->max[1],
-			// 	e->location[2]+e->max[2]
-			//  );
-			// graphics::text::draw( txtbfr, 
-			// 	-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
+			snprintf(txtbfr, sizeof(txtbfr), "min: %f %f %f max: %f %f %f", 
+				e->location[0]+e->min[0],
+				e->location[1]+e->min[1],
+				e->location[2]+e->min[2],
+				e->location[0]+e->max[0],
+				e->location[1]+e->max[1],
+				e->location[2]+e->max[2]
+			 );
+			graphics::text::draw( txtbfr, 
+				-1 + 8 * sx, 1 - (20*line++) * sy, sx, sy, 20 );
 		}
 
 		LocalInputSystem::mouse(cursorLocked);

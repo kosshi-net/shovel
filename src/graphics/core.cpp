@@ -24,6 +24,8 @@
 #include <graphics/text.hpp>
 #include <graphics/voxel.hpp>
 
+#include <graphics/box.hpp>
+
 namespace graphics {
 
 	typedef struct {
@@ -158,6 +160,7 @@ namespace graphics {
 
 		// SHADER
 		voxel::init();
+		box::init();
 
 		Logger::log("GRAPHICS :: Initialized!");
 

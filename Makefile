@@ -6,7 +6,8 @@ CC= g++
 CFLAGS= \
 	-ggdb \
 	-O3 -ftree-vectorize -msse3 -m32 -Wall \
-	-static -fopenmp -static-libgcc -static-libstdc++ -std=c++11 \
+	-static -fopenmp -static-libgcc -static-libstdc++ -std=c++11 
+	# \
 	-Wl,-subsystem,windows
 
 #-Wl,-subsystem,windows -fopt-info-vec-missed 
@@ -38,6 +39,7 @@ OBJECTS = \
 	$(SRC)graphics/voxel.o \
 	$(SRC)graphics/cull.o \
 	$(SRC)graphics/text.o \
+	$(SRC)graphics/box.o \
 	$(SRC)input/input.o \
 	$(SRC)terrain/terrain.o \
 	$(SRC)mesher/terrainmesher.o \

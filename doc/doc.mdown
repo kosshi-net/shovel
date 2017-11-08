@@ -1,8 +1,33 @@
+# SHOVEL ENGINE DOCUMENTATION, KINDA
+
+## Graphics engine layer structure
+	This is an observation, not a ruleset.
+
+### LAYER 0
+	Everything from opengl libraries to hardware, stuff we dont care about
+
+### LAYER 1
+	Core, it's job is to provide functions for managing frames, buffer swapping,
+	shader creation and other helpers. Also initializes layers 0 and 2.
+
+### LAYER 2
+	Object type specific rendering/-related managment logic.
+
+### LAYER 3
+	Rendering-related game logic, decides what to render and where
+
+
+
+
+# DOODLING SPACE DOWN BELOW
+
+
+
+
+
 class game
 	renderer
 	region
-
-
 
 
 region
@@ -377,31 +402,6 @@ Map 1024x128x1024
 
 
 
-
-
-
-
-how the fuck should i structure the renderer?
-
-
-
-renderer
-	text
-	cube
-	voxelmesh
-
-
-
-Renderer core
-
-#include <renderer/core.hpp>
-
-#include <renderer/text.hpp>
-
-#include <renderer/voxelmesh.hpp>
-
-
-renderer::cube::draw()
 
 
 

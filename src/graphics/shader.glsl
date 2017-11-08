@@ -64,3 +64,33 @@
 		gl_FragColor = vec4(1, 1, 1, texture2D(uTex, texcoord).r)*uColor;
 		// gl_FragColor = vec4(1,1,1,1);
 	}
+
+
+<shader boxVertSrc/>
+
+	#version 100
+	precision mediump float;
+
+	attribute vec3 aVertex;
+
+	uniform vec3 uColor;
+	varying vec3 vColor;
+
+	uniform mat4 uMP;
+	uniform mat4 uMV;
+
+	void main() {
+		vColor = uColor;
+	 	gl_Position = uMP*uMV*vec4(aVertex, 1.0);
+	};
+
+<shader boxFragSrc/>
+
+	#version 100
+	precision mediump float;
+
+	varying vec3 vColor;
+
+	void main() {
+		gl_FragColor = vec4(vColor, 1.0);
+	};
