@@ -8,7 +8,7 @@ Written with a very limited C-like subset of C++. No OOP, just ECS.
 
 The one notable thing about this is the greedy mesher that I got to mesh chunks of 64^3 voxels in 10-15ms on a Pentium G4560 (FYI that is really damn fast). 
 
-Build using old school Makefiles, compiled with GCC (MinGW-w64), written in Sublimetext 3. I can't stand MSVC.
+Built using old school Makefiles, compiled with GCC (MinGW-w64), written in Sublimetext 3. I can't stand MSVC.
 
 
 # Images
